@@ -70,7 +70,7 @@ Here is the project details ...
 
 ## Resources
 
-- [Best Practices](https://www.SamuelAsherRivello.com/best-practices/)
+- [Best Practices](https://www.SamuelAsherRivello.com/best-practices/) - Procedures prescribed as the most effective
 
 
 ## Credits
