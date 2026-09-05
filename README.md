@@ -1,8 +1,14 @@
-﻿<!-- AI may update existing content; add or remove content only when requested. -->
+![Samuel Asher Rivello](documentation/images/samuel-asher-rivello-banner.png)
+
+<!-- AI may update existing content; add or remove content only when requested. -->
 
 # Blockchain Integration Service
 
 **WIP** — reusable BTC Lightning integration for browser games. The first React demo provides a split-screen admin and portrait runtime preview.
+
+### Screenshots
+
+<a href="documentation/images/screenshot01.png"><img src="documentation/images/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
 ## Live Demo
 
@@ -14,7 +20,7 @@ In the current local implementation, Account / Account Button demonstrates entry
 
 ## Table of Contents
 
-**Completed:** [A1. Open Account](documentation/User%20Story%20Diagrams.md#a1-open-the-game-then-account) ✓ — Account button → Account dialogue → Back.
+**Completed:** A1. Open Account ✓ — Account button → Account dialogue → Back.
 
 1. [Live Demo](#live-demo)
 2. [Getting Started](#getting-started)
@@ -26,7 +32,7 @@ In the current local implementation, Account / Account Button demonstrates entry
 
 ## Getting Started
 
-Read the [project brief](documentation/BGS_PROJECT_BRIEF.md) and [design discussion](documentation/design-discussion.md). With Node.js 24 or newer installed, run `npm ci`, then `npm run dev`. Open the printed localhost URL. The host HTML is `packages/integration-demo/index.html`; serve it through Vite rather than opening the source as a file URL.
+With Node.js 24 or newer installed, run `npm ci`, then `npm run dev`. Open the printed localhost URL. The host HTML is `packages/integration-demo/index.html`; serve it through Vite rather than opening the source as a file URL.
 
 ### Release Workflow
 
@@ -49,11 +55,6 @@ Read the [project brief](documentation/BGS_PROJECT_BRIEF.md) and [design discuss
 
 Signet-only, Arkade-only integration with no custom application server. The separate game remains playable without an account. Real transaction outcomes only.
 
-### Documentation
-
-- [Brief](documentation/BGS_PROJECT_BRIEF.md): original BGS design baseline.
-- [Design discussion](documentation/design-discussion.md): pending architecture and naming decisions.
-
 ### Configuration
 
 React 19.2.8 + TypeScript, npm workspaces, and Vite. React was verified against the npm latest tag when this slice was created. The official Arkade SDK (`@arkade-os/sdk` 0.4.67) creates genuine Signet wallets in `packages/integration`. The integration owns encrypted browser persistence; recovery material never enters public state or events. No payments or funding run.
@@ -73,7 +74,7 @@ The root `package.json` defines npm workspaces and shared tooling. Each package 
 
 - `packages/integration/src/`: public entry point, production UI, and reserved core/Arkade boundaries.
 - `packages/integration-demo/src/`: admin panel, portrait preview, and split-screen composition.
-- `documentation/`: brief and decisions.
+- `documentation/images/`: screenshot and banner assets.
 - `.openspec/`: specification configuration.
 - `.agents/skills/`: OpenSpec workflows.
 
@@ -111,7 +112,6 @@ If publishing fails, inspect the Actions run. Pages source must be **GitHub Acti
 ## Resources
 
 - [OpenSpec](https://openspec.dev/)
-- [Source brief](documentation/BGS_PROJECT_BRIEF.md)
 
 ## Credits
 
