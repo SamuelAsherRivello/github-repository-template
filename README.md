@@ -1,6 +1,6 @@
 ﻿<!-- AI may update existing content; add or remove content only when requested. -->
 
-# Blockchain Integration Service
+# {PROJECT-NAME}
 
 **WIP** — reusable BTC Lightning integration for browser games. The first React demo provides a split-screen admin and portrait runtime preview.
 
