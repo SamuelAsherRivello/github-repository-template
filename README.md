@@ -1,13 +1,13 @@
-![Samuel Asher Rivello](documentation/images/samuel-asher-rivello-banner.png)
-<!-- AI may update existing content; add or remove content only when requested. -->
+![Samuel Asher Rivello](PROJECT_NAME/documentation/samuel-asher-rivello-banner.png)
 
 # {PROJECT_NAME}
 
+Here is the project introduction sentence.
+
 ## Images
 
-### Screenshots
+<a href="PROJECT_NAME/documentation/screenshot01.png"><img src="PROJECT_NAME/documentation/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
-<a href="documentation/images/screenshot01.png"><img src="documentation/images/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
 ## Demo
 
@@ -15,29 +15,25 @@
 
 ## Table of Contents
 
-**Completed:** A1. Open Account ✓ — Account button → Account dialogue → Back.
-
-1. [Live Demo](#live-demo)
-2. [Getting Started](#getting-started)
-3. [Project Overview](#project-overview)
-4. [Project Details](#project-details)
-5. [Troubleshooting](#troubleshooting)
-6. [Resources](#resources)
-7. [Credits](#credits)
+1. [Getting Started](#getting-started)
+2. [Project Overview](#project-overview)
+3. [Project Details](#project-details)
+4. [Resources](#resources)
+5. [Credits](#credits)
 
 ## Getting Started
 
-With Node.js 24 or newer installed, run `npm ci`, then `npm run dev`. Open the printed localhost URL. The host HTML is `packages/integration-demo/index.html`; serve it through Vite rather than opening the source as a file URL.
+Here is the getting started ...
 
-### Build Project
-
-1. Run `{command}`.
-
-### Run Project
+### 📦 Build Project
 
 1. Run `{command}`.
 
-### Release version
+### 📦 Run Project
+
+1. Run `{command}`.
+
+### 📦 Release Version
 
 1. Run `{command}`.
 
@@ -45,46 +41,28 @@ With Node.js 24 or newer installed, run `npm ci`, then `npm run dev`. Open the p
 
 Here is the project overview...
 
-Signet-only, Arkade-only integration with no custom application server. The separate game remains playable without an account. Real transaction outcomes only.
-
-### Configuration
-
-React 19.2.8 + TypeScript, npm workspaces, and Vite. React was verified against the npm latest tag when this slice was created. The official Arkade SDK (`@arkade-os/sdk` 0.4.67) creates genuine Signet wallets in `packages/integration`. The integration owns encrypted browser persistence; recovery material never enters public state or events. No payments or funding run.
-
-### Dependencies
-
-- `PROJECT_NAME/package.json`: Lists dependencies and scripts.
-
-### Documentation
+### 📝 Documentation
 
 - `README.md`: Primary documentation for this repo.
 
-### Configuration
-
-- Any config details..
-
-### Structure
+### 📝 Structure
 
 - `PROJECT_NAME`: Main project folder.
-- `packages/integration/src/`: public entry point, production UI, and reserved core/Arkade boundaries.
-- `packages/integration-demo/src/`: admin panel, portrait preview, and split-screen composition.
-- `documentation/images/`: screenshot and banner assets.
-- `.openspec/`: specification configuration.
-- `.agents/skills/`: OpenSpec workflows.
+
+
 
 
 ## Project Details
 
-### AI
+Here is the project details ...
+
+### 📦 AI
 
 - [Codex](https://openai.com/codex/): The best way to build with agents.
 - [OpenSpec](https://openspec.dev/): Specification-driven development
 
-### Editors
 
-- [Visual Studio Code](https://code.visualstudio.com/): The open source AI code editor.
-
-### Packages
+### 📦 Packages
 
 - [Vite](https://vite.dev/): JavaScript bundling and local dev server.
 
@@ -93,23 +71,24 @@ React 19.2.8 + TypeScript, npm workspaces, and Vite. React was verified against 
 ## Resources
 
 - [Best Practices](https://www.SamuelAsherRivello.com/best-practices/)
-- [OpenSpec](https://openspec.dev/)
+
 
 ## Credits
 
-### Created By
+### 💡 Contributors
 
-- Samuel Asher Rivello
-- Over 25 years of game development experience as of 2026
+- Samuel Asher Rivello - Over 25 years of game development experience as of 2026
 
-### Contact
+### 💡 Contact
 
-- ⭐ LinkedIn: [LinkedIn.com/in/SamuelAsherRivello](https://Linkedin.com/in/SamuelAsherRivello)
-- Git: [GitHub.com/SamuelAsherRivello](https://github.com/SamuelAsherRivello/)
-- Resume and Portfolio: [SamuelAsherRivello.com](http://www.SamuelAsherRivello.com)
-- Twitter: [Twitter.com/srivello](https://twitter.com/srivello/)
+- [LinkedIn.com/in/SamuelAsherRivello](https://Linkedin.com/in/SamuelAsherRivello) ⭐ 
+- [GitHub.com/SamuelAsherRivello](https://github.com/SamuelAsherRivello/)
+- [Twitter.com/srivello](https://twitter.com/srivello/)
+- Resume / Portfolio: [SamuelAsherRivello.com](http://www.SamuelAsherRivello.com)
 
-### License
 
-Provided as-is under the [MIT License](LICENSE).
-Copyright © 2026 Rivello Multimedia Consulting, LLC.
+### 💡 License
+
+- Provided as-is under the [MIT License](LICENSE).
+
+- Copyright © 2026 Rivello Multimedia Consulting, LLC.
