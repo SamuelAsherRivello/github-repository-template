@@ -1,3 +1,4 @@
+![Samuel Asher Rivello](documentation/images/samuel-asher-rivello-banner.png)
 <!-- AI may update existing content; add or remove content only when requested. -->
 
 # {PROJECT_NAME}
@@ -6,7 +7,7 @@
 
 ### Screenshots
 
-<img src="" width=400" />
+<a href="documentation/images/screenshot01.png"><img src="documentation/images/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
 ## Demo
 
@@ -14,15 +15,19 @@
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Project Overview](#project-overview)
-3. [Project Details](#project-details)
-4. [Resources](#resources)
-5. [Credits](#credits)
+**Completed:** A1. Open Account ✓ — Account button → Account dialogue → Back.
+
+1. [Live Demo](#live-demo)
+2. [Getting Started](#getting-started)
+3. [Project Overview](#project-overview)
+4. [Project Details](#project-details)
+5. [Troubleshooting](#troubleshooting)
+6. [Resources](#resources)
+7. [Credits](#credits)
 
 ## Getting Started
 
-Here is the getting started ...
+With Node.js 24 or newer installed, run `npm ci`, then `npm run dev`. Open the printed localhost URL. The host HTML is `packages/integration-demo/index.html`; serve it through Vite rather than opening the source as a file URL.
 
 ### Build Project
 
@@ -40,6 +45,12 @@ Here is the getting started ...
 
 Here is the project overview...
 
+Signet-only, Arkade-only integration with no custom application server. The separate game remains playable without an account. Real transaction outcomes only.
+
+### Configuration
+
+React 19.2.8 + TypeScript, npm workspaces, and Vite. React was verified against the npm latest tag when this slice was created. The official Arkade SDK (`@arkade-os/sdk` 0.4.67) creates genuine Signet wallets in `packages/integration`. The integration owns encrypted browser persistence; recovery material never enters public state or events. No payments or funding run.
+
 ### Dependencies
 
 - `PROJECT_NAME/package.json`: Lists dependencies and scripts.
@@ -55,8 +66,11 @@ Here is the project overview...
 ### Structure
 
 - `PROJECT_NAME`: Main project folder.
-
-
+- `packages/integration/src/`: public entry point, production UI, and reserved core/Arkade boundaries.
+- `packages/integration-demo/src/`: admin panel, portrait preview, and split-screen composition.
+- `documentation/images/`: screenshot and banner assets.
+- `.openspec/`: specification configuration.
+- `.agents/skills/`: OpenSpec workflows.
 
 
 ## Project Details
@@ -79,7 +93,7 @@ Here is the project overview...
 ## Resources
 
 - [Best Practices](https://www.SamuelAsherRivello.com/best-practices/)
-
+- [OpenSpec](https://openspec.dev/)
 
 ## Credits
 
