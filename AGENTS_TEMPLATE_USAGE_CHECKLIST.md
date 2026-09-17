@@ -1,5 +1,7 @@
 # AI Template Usage Checklist
 
+> IMPORTANT: This checklist is completed in the new project repository created from this template. Do not commit project-specific changes to `github-repository-template`. First create a separate repository whose name matches the project name, then perform the checklist and commit the work there.
+
 Use this checklist when creating a project from this repository. Make choices
 from the new project's actual needs. This repository includes a small
 Node/npm/Vite baseline that may be retained or replaced deliberately.
