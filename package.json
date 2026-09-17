@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "pw": "playwright-cli",
     "pw:help": "playwright-cli --help",
-    "test": "node --test --test-isolation=none project-name/test/page.test.mjs"
+    "test": "node --test --test-isolation=none project-name/test/page.test.mjs project-name/test/openspec-skills.test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^6.1.1",

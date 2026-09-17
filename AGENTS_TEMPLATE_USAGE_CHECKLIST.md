@@ -59,6 +59,15 @@ Node/npm/Vite baseline that may be retained or replaced deliberately.
 
 ## 5. Configure OpenSpec
 
+- [ ] From the resulting repository root, run `openspec update .` after the
+      project is created and after any OpenSpec CLI upgrade; do not hand-edit
+      generated `.agents/skills/openspec-*` files.
+- [ ] Run `openspec doctor --json`, confirm `.agents/skills/.openspec-target`
+      contains `codex`, and confirm generated `metadata.generatedBy` values
+      match `openspec --version`.
+- [ ] Reopen Codex at the resulting repository root and verify `$openspec-*`
+      autocomplete includes `$openspec-apply-change` before relying on the
+      repository-local workflow.
 - [ ] Replace the neutral `openspec/config.yaml` context with verified project
       constraints before planning the first substantial change.
 - [ ] Keep `changes/` for active work and `specs/` for accepted specifications.

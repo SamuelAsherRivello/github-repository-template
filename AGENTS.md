@@ -52,3 +52,18 @@ The default HTML template uses four reusable `corner` instances inside
 Correct: run `git status`, dependency, build, test, and run commands from the
 repository root; keep the application's source and tests under
 `project-name/`.
+
+## OpenSpec skill discovery
+
+- Codex uses repository-local OpenSpec skills from `.agents/skills/`. Invoke
+  them with `$openspec-*`; slash commands such as `/opsx...` are not Codex
+  skill names.
+- After creating a project from this template or updating the OpenSpec CLI, run
+  `openspec update .` from the repository root, followed by
+  `openspec doctor --json`.
+- Confirm each generated skill folder matches its `name:` frontmatter and each
+  `metadata.generatedBy` value matches `openspec --version`. Do not hand-edit
+  generated OpenSpec skill files.
+- Reopen Codex at the resulting repository root after skills are generated or
+  refreshed so repository-local `$openspec-*` autocomplete is indexed for the
+  new workspace.
