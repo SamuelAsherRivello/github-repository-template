@@ -1,5 +1,7 @@
 # AI Template Usage Checklist
 
+> Repository creation workflow: When the user provides a Git URL, treat that repository as an inspiration/source repository. Do not clone it as the working project and do not preserve its history. Create a brand-new repository whose name matches the project name, copy the files from the inspiration repository's current `HEAD` into the new repository, and make exactly one commit named `initial commit`. At the end of this checklist, the local project must be a checkout of the new repository with that new repository configured as `origin`; do not publish project-specific work to the template or inspiration repository.
+
 > IMPORTANT: This checklist is completed in the new project repository created from this template. Do not commit project-specific changes to `github-repository-template`. First create a separate repository whose name matches the project name, then perform the checklist and commit the work there.
 
 Use this checklist when creating a project from this repository. Make choices
