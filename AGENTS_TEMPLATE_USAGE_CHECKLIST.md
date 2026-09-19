@@ -40,6 +40,16 @@ Node/npm/Vite baseline that may be retained or replaced deliberately.
 - [ ] Rename the README H1 (`# {project-name}`) to the confirmed project name.
 - [ ] Replace the README introduction placeholder (`This is the project
       repo....`) with a concise summary from implemented behavior.
+- [ ] Set the new GitHub repository's About description to a concise summary
+      of the project's purpose and implemented behavior, consistent with its
+      README.
+- [ ] Set GitHub topics dynamically from the project's actual purpose,
+      technologies, target platforms, and implemented features. Select relevant
+      topics for each project and remove inherited template topics that do not
+      apply; do not use a fixed topic list or advertise planned capabilities.
+- [ ] Always set the GitHub About website URL to
+      `https://www.samuelasherrivello.com/` (www.SamuelAsherRivello.com/).
+      Keep the project's live demo URL in the README's Live Demo section.
 - [ ] Replace the README getting-started placeholder (`This is the getting
       started...`) with accurate setup requirements and first-run guidance.
 - [ ] Replace the README project-details placeholder (`This is the project
@@ -77,12 +87,15 @@ Node/npm/Vite baseline that may be retained or replaced deliberately.
 
 ## 5. Configure OpenSpec
 
-- [ ] From the resulting repository root, run `openspec update .` after the
-      project is created and after any OpenSpec CLI upgrade; do not hand-edit
-      generated `.agents/skills/openspec-*` files.
+- [ ] Use the bundled `.agents/skills/openspec-*` files, generated with
+      OpenSpec 1.13.1. They are ready to use without regeneration during this
+      checklist; do not hand-edit generated skill files.
+- [ ] Verify `openspec --version` reports 1.13.1. If the CLI is missing or a
+      different version, install `@fission-ai/openspec@1.13.1` following the
+      [official installation guide](https://openspec.dev/docs/installation).
 - [ ] Run `openspec doctor --json`, confirm `.agents/skills/.openspec-target`
       contains `codex`, and confirm generated `metadata.generatedBy` values
-      match `openspec --version`.
+      are 1.13.1.
 - [ ] Reopen Codex at the resulting repository root and verify `$openspec-*`
       autocomplete includes `$openspec-apply-change` before relying on the
       repository-local workflow.
@@ -114,6 +127,9 @@ Node/npm/Vite baseline that may be retained or replaced deliberately.
 - [ ] Verify that README links, screenshots, commands, packages, deployment
       instructions, and release instructions describe the resulting project,
       not this template.
+- [ ] Verify the new repository's GitHub About description and topics match
+      the finished project and its website URL is exactly
+      `https://www.samuelasherrivello.com/`.
 
 ## 8. Ask about checklist cleanup
 

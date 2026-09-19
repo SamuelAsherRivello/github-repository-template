@@ -61,7 +61,6 @@ This is the project details...
 
 - `AGENTS.md` contains repository-specific AI agent guidance.
 - `AGENTS_TEMPLATE_USAGE_CHECKLIST.md` contains the template reuse checklist.
-- [OpenCode](.opencode/) contains additional agent guidance.
 - [openspec](openspec/) contains the repository's specification workflow
   configuration.
 
