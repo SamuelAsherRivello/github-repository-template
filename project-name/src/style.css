@@ -1,0 +1,76 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#ui_layer {
+  position: fixed;
+  inset: var(--ui-margin-y, 20px) var(--ui-margin-x, 20px);
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  color: black;
+  font-size: 10pt;
+  pointer-events: auto;
+}
+
+.corner_top_left {
+  top: 0;
+  left: 0;
+}
+
+.corner_top_right {
+  top: 0;
+  right: 0;
+}
+
+.corner_bottom_left {
+  bottom: 0;
+  left: 0;
+}
+
+.corner_bottom_right {
+  right: 0;
+  bottom: 0;
+}
+
+.corner a,
+.corner a:visited {
+  color: black;
+}
+
+.corner_body,
+.corner_title {
+  color: black;
+  font-size: 10pt;
+  line-height: 1.4;
+}
+
+.corner_title {
+  font-weight: 700;
+}
+
+.corner_body {
+  font-weight: 400;
+}
+
+.settings_option {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: black;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  font: inherit;
+}
+
+.settings_option:focus-visible {
+  outline: 2px solid black;
+  outline-offset: 3px;
+}
