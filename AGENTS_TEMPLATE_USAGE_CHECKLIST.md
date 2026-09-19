@@ -1,6 +1,6 @@
 # AI Template Usage Checklist
 
-> Repository creation workflow: When the user provides a Git URL, treat that repository as an inspiration/source repository. Do not clone it as the working project and do not preserve its history. Create a brand-new repository whose name matches the project name, copy the files from the inspiration repository's current `HEAD` into the new repository, and make exactly one commit named `initial commit`. At the end of this checklist, the local project must be a checkout of the new repository with that new repository configured as `origin`; do not publish project-specific work to the template or inspiration repository.
+> Repository creation workflow: When the user provides a Git URL, treat that repository as an inspiration/source repository. Do not clone it as the working project and do not preserve its history. Create a brand-new repository whose name matches the project name, copy the files from the inspiration repository's current `HEAD` into the new repository, and make exactly one commit named `Initial Commit`. At the end of this checklist, the local project must be a checkout of the new repository with that new repository configured as `origin`; do not publish project-specific work to the template or inspiration repository.
 
 > IMPORTANT: This checklist is completed in the new project repository created from this template. Do not commit project-specific changes to `github-repository-template`. First create a separate repository whose name matches the project name, then perform the checklist and commit the work there.
 
@@ -19,6 +19,20 @@ Node/npm/Vite baseline that may be retained or replaced deliberately.
 
 ## 2. Establish the project
 
+- [ ] Create a brand-new repository named for the confirmed project, based on
+      this codebase's current `HEAD`. Copy its tracked files, including tracked
+      dotfiles, without copying `.git`, commit history, branches, or tags. Do not
+      fork this repository or use a clone of it as the new working project.
+- [ ] Initialize fresh Git history in the new project and create exactly one
+      commit with the exact message `Initial Commit`. Create the destination
+      GitHub repository empty, without an automatically generated README,
+      license, or `.gitignore` commit, and configure it as `origin` before
+      pushing the initial snapshot.
+- [ ] Verify the new repository starts with one commit:
+      `git rev-list --count HEAD` must return `1`, and
+      `git log -1 --format=%B` must return
+      `Initial Commit`. Confirm `origin` points to the new project repository
+      before continuing with project-specific changes.
 - [ ] Rename `project-name/`, update the Vite `root` setting, and replace every
       `{project-name}`, `{github-owner}`, and `{repository-name}` placeholder
       with confirmed project metadata before adding project-specific
