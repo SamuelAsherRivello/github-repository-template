@@ -4,7 +4,6 @@ import { BrowserSurface } from "./BrowserSurface.jsx";
 import { aspectRatioPresets, defaultLayout } from "./layout.js";
 import { Dialog } from "./Dialog.jsx";
 import { getRenderScaleDisplayText } from "../content/babylon/showcase-overlay.js";
-import babylonLogoUrl from "../content/babylon/images/babylon_logo_32x32.png?url";
 import {
   cycleRenderResolutionPreset,
   getRenderResolutionDimensions,
@@ -82,6 +81,15 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
   const renderResolutionText = renderResolutionInfo.width > 0
     ? `(R) RenderResolution: ${renderResolutionInfo.width}x${renderResolutionInfo.height}${renderPreset === "native" ? " (Native)" : ""}`
     : "(R) RenderResolution: measuring…";
+  const renderScaleText = getRenderScaleDisplayText(renderScale);
+  const modeText = "Mode: 2DPixelPerfect";
+  const openBabylonSettings = useCallback(() => setActiveDialog("babylon"), []);
+  const cycleRenderResolution = useCallback(() => {
+    setConfig((current) => ({
+      ...current,
+      renderPreset: cycleRenderResolutionPreset(current.renderPreset),
+    }));
+  }, []);
   const updateViewportPixels = useCallback((rect) => {
     setViewportPixels((current) => {
       const next = { width: Math.round(rect.width), height: Math.round(rect.height) };
@@ -111,10 +119,7 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
       if (key === "c") setActiveDialog((dialog) => dialog === "config" ? null : "config");
       if (key === "v") setActiveDialog((dialog) => dialog === "stats" ? null : "stats");
       if (key === "b") setActiveDialog((dialog) => dialog === "babylon" ? null : "babylon");
-      if (key === "r" && !event.repeat) setConfig((current) => ({
-        ...current,
-        renderPreset: cycleRenderResolutionPreset(current.renderPreset),
-      }));
+      if (key === "r" && !event.repeat) cycleRenderResolution();
       if (event.key === "Escape") setActiveDialog(null);
     };
     window.addEventListener("keydown", handleShortcut);
@@ -172,17 +177,25 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
       renderPreset,
       nativeBackingSize,
       setRenderResolutionInfo: setReportedRenderResolution,
+      worldHudVisible: hudVisible,
+      renderResolutionText,
+      renderScaleText,
+      modeText,
+      openBabylonSettings,
+      cycleRenderResolution,
       sceneBorderVisible: activeDialog === "babylon",
       processingPaused: activeDialog !== null,
     }}>
     <BrowserSurface layout={activeLayout} gutters={gutters} onViewportResize={updateViewportPixels} ui={<>
-      {hudVisible && <div className="babylon_viewport_info" aria-label="Babylon Lite viewport settings">
-        <img className="babylon_viewport_logo" src={babylonLogoUrl} alt="" aria-hidden="true" />
-        <div className="corner-title"><button className="babylon_viewport_info_button" type="button" onClick={() => setActiveDialog("babylon")} aria-label="Open Babylon Lite settings">(B)</button> Babylon Lite</div>
-        <div className="corner-body"><button className="babylon_viewport_info_button" type="button" onClick={() => setConfig((current) => ({ ...current, renderPreset: cycleRenderResolutionPreset(current.renderPreset) }))} aria-label={`Cycle render resolution, currently ${renderResolutionInfo.width} by ${renderResolutionInfo.height}`}>{renderResolutionText}</button></div>
-        <div className="corner-body">{getRenderScaleDisplayText(renderScale)}</div>
-        <div className="corner-body">Mode: 2DPixelPerfect</div>
+      {hudVisible && <div className="babylon_accessible_controls" aria-label="Babylon Lite viewport settings">
+        <span aria-live="polite">{renderResolutionText}; {renderScaleText}; {modeText}</span>
+        <button type="button" onClick={openBabylonSettings}>Open Babylon Lite settings</button>
+        <button type="button" onClick={cycleRenderResolution}>Cycle render resolution, currently {renderResolutionInfo.width} by {renderResolutionInfo.height}</button>
       </div>}
+      <div className="babylon_hud_typography" aria-hidden="true">
+        <span className="corner-title" data-world-hud-title-style />
+        <span className="corner-body" data-world-hud-body-style />
+      </div>
       {hudVisible && <Corner position="top_left">
         <div id="project_title" className="corner-body">
           GitHub Repository Template

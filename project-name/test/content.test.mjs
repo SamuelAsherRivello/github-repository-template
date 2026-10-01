@@ -6,6 +6,7 @@ import { contentConfig, getRenderingPolicy, pixelPerfectOptions } from '../src/c
 import { getInitializationMessage } from '../src/content/babylon/initialization.js';
 import { getLogicalToRenderScale } from '../src/content/babylon/pixel-perfect.js';
 import { getRenderScaleDisplayText } from '../src/content/babylon/showcase-overlay.js';
+import { drawWorldHud, getWorldHudLayout, hitTestWorldHud } from '../src/content/babylon/world-hud.js';
 import {
   createRenderTargetSurfaceView,
   cycleRenderResolutionPreset,
@@ -97,6 +98,69 @@ test('formats the active internal render scale independently of the CSS viewport
 
 });
 
+test('keeps the Babylon Lite world HUD at the existing CSS-pixel position across DPRs', () => {
+  const oneX = getWorldHudLayout({
+    width: 1016,
+    height: 572,
+    devicePixelRatio: 1,
+    titleLineHeight: 18.6667,
+    bodyLineHeight: 14.9333,
+    titleWidth: 91,
+    titleButtonWidth: 18,
+    resolutionWidth: 135,
+    resolutionLineWidth: 135,
+  });
+  const twoX = getWorldHudLayout({
+    width: 2032,
+    height: 1144,
+    devicePixelRatio: 2,
+    titleLineHeight: 18.6667,
+    bodyLineHeight: 14.9333,
+    titleWidth: 182,
+    titleButtonWidth: 36,
+    resolutionWidth: 270,
+    resolutionLineWidth: 270,
+  });
+
+  assert.deepEqual(oneX.logo, twoX.logo);
+  assert.equal(oneX.logo.width, 32);
+  assert.equal(oneX.bottomInset, 9);
+  assert.equal(oneX.hitTargets.openSettings.width, 18);
+  assert.equal(oneX.hitTargets.cycleResolution.width, 135);
+  assert.equal(hitTestWorldHud({ x: 470, y: oneX.hitTargets.openSettings.top + 1 }, oneX.hitTargets), 'openSettings');
+  assert.equal(hitTestWorldHud({ x: 500, y: oneX.hitTargets.cycleResolution.top + 1 }, oneX.hitTargets), 'cycleResolution');
+  assert.equal(hitTestWorldHud({ x: 10, y: 10 }, oneX.hitTargets), null);
+});
+
+test('draws the live Babylon Lite readout and clears a hidden HUD', () => {
+  const drawn = [];
+  const context = {
+    clearRect() {}, save() {}, restore() {}, drawImage(...args) { drawn.push(['image', ...args]); },
+    measureText(text) {
+      const size = Number.parseFloat(this.font.match(/[0-9.]+px/)[0]);
+      return { width: text.length * size * 0.5, fontBoundingBoxAscent: size * 0.75, fontBoundingBoxDescent: size * 0.25 };
+    },
+    fillText(...args) { drawn.push(['text', this.fillStyle, ...args]); },
+  };
+  const titleStyle = { fontStyle: 'normal', fontWeight: '700', fontSize: '13.333px', fontFamily: 'serif', lineHeight: '18.666px' };
+  const bodyStyle = { fontStyle: 'normal', fontWeight: '400', fontSize: '10.667px', fontFamily: 'serif', lineHeight: '14.933px' };
+  const result = drawWorldHud(context, {}, {
+    width: 1016,
+    height: 572,
+    resolutionText: '(R) RenderResolution: 254x143',
+    renderScaleText: 'Render Scale: 0.25x',
+    titleStyle,
+    bodyStyle,
+  });
+
+  assert.ok(drawn.filter(([kind]) => kind === 'text').every(([, color]) => color === '#e0694b'));
+  assert.equal(drawn.filter(([kind]) => kind === 'text').length, 4);
+  assert.equal(result.layout.lines[1].text, '(R) RenderResolution: 254x143');
+  assert.equal(result.layout.lines[2].text, 'Render Scale: 0.25x');
+  assert.equal(result.layout.lines[3].text, 'Mode: 2DPixelPerfect');
+  assert.deepEqual(drawWorldHud(context, {}, { width: 1016, height: 572, visible: false }), { layout: null, hitTargets: {} });
+});
+
 test('uses the requested corner title/body styles and ties the Lite border to the React dialog', async () => {
   const [app, styles, content] = await Promise.all([
     readFile(new URL('../src/ui/App.jsx', import.meta.url), 'utf8'),
@@ -105,16 +169,16 @@ test('uses the requested corner title/body styles and ties the Lite border to th
   ]);
 
   assert.match(app, /className="corner-title">/);
-  assert.match(app, /aria-label="Open Babylon Lite settings">\(B\)<\/button> Babylon Lite/);
   assert.match(app, /RenderResolution: \$\{renderResolutionInfo\.width\}x\$\{renderResolutionInfo\.height\}/);
   assert.match(app, /renderPreset: "native"/);
   assert.match(app, /isRenderResolutionPreset\(saved\?\.renderPreset\)/);
   assert.match(app, /localStorage\.setItem\(configStorageKey, JSON\.stringify\(config\)\)/);
   assert.match(app, /key === "r" && !event\.repeat/);
-  assert.match(app, /className="corner-body"><button className="babylon_viewport_info_button"/);
-  assert.match(app, /onClick=\{\(\) => setConfig\(\(current\) => \(\{ \.\.\.current, renderPreset: cycleRenderResolutionPreset/);
+  assert.doesNotMatch(app, /babylon_viewport_info|babylon_viewport_logo|babylonHudCompare/);
   assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"><div>Babylon Lite<\/div><div>\{renderResolutionText\}<\/div>/);
-  assert.match(app, /className="corner-body">\{getRenderScaleDisplayText/);
+  assert.match(app, /worldHudVisible: hudVisible,/);
+  assert.match(app, /className="babylon_accessible_controls"/);
+  assert.match(app, /data-world-hud-title-style/);
   assert.match(app, /Mode: 2DPixelPerfect/);
   assert.match(app, /key === "b"/);
   assert.match(app, /event\.key === "Escape"/);
@@ -122,12 +186,10 @@ test('uses the requested corner title/body styles and ties the Lite border to th
   assert.match(app, /processingPaused: activeDialog !== null/);
   assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"/);
   assert.match(app, /className=\{activeDialog === "babylon" \? "babylon_settings_dialog"/);
-  assert.match(styles, /left: 50%/);
-  assert.match(styles, /bottom: 9px/);
-  assert.match(styles, /transform: translateX\(-50%\)/);
-  assert.match(styles, /text-align: center/);
-  assert.match(styles, /color: #e0694b/);
-  assert.match(styles, /\.babylon_viewport_info \.corner-title,\s*\.babylon_viewport_info \.corner-body \{\s*color: inherit/);
+  assert.doesNotMatch(styles, /\.babylon_viewport_info|\.babylon_viewport_logo|\.babylon_viewport_info_button/);
+  assert.match(content, /layers: \[presentationLayer, hudLayer\]/);
+  assert.match(content, /onClick=\{handleHudClick\}/);
+  assert.match(content, /onPointerMove=\{handleHudPointerMove\}/);
   assert.match(content, /sceneBorderVisible && <div className="babylon_scene_border"/);
   assert.match(styles, /\.babylon_scene_border[\s\S]*border: 5px solid orange/);
 });
@@ -159,7 +221,12 @@ test('reports WebGPU-only initialization and allocation failures and uses the en
   assert.match(content, /queueMicrotask\(\(\) => \{\s*if \(!cancelled\) void setup\(\);\s*\}\)/);
   assert.match(content, /if \(!navigator\.gpu\) throw new Error\("WebGPU is not available in this browser\."\)/);
   assert.match(content, /setMessage\(getInitializationMessage\(Boolean\(navigator\.gpu\), error\)\)/);
-  assert.doesNotMatch(content, /\.getContext\(["'](?:2d|webgl2?)["']/i);
+  assert.match(content, /createEngine\(canvas, pixelPerfectOptions\.engine\)/);
+  assert.match(content, /hudCanvas = document\.createElement\("canvas"\)/);
+  assert.match(content, /hudCanvas\.getContext\("2d", \{ alpha: true \}\)/);
+  assert.match(content, /createTexture2DFromPixels\(engine, pixels, width, height/);
+  assert.match(content, /layers: \[presentationLayer, hudLayer\]/);
+  assert.doesNotMatch(content, /\.getContext\(["']webgl2?["']/i);
   assert.match(content, /await startEngine\(engine\)/);
   assert.match(content, /await startEngine\(engine\);\s*\/\/ StrictMode can unmount this effect while the first async engine start[\s\S]*?if \(cancelled\) return;/);
 });

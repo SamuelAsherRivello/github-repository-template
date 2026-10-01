@@ -5,6 +5,7 @@ import {
   attachSpriteAnimationsToRenderer,
   centerSprite2DView,
   createRenderTexture2D,
+  createTexture2DFromPixels,
   createGridSpriteAtlas,
   createSprite2DLayer,
   createSpriteAnimationManager,
@@ -21,13 +22,16 @@ import {
   setSpriteRendererTarget,
   startEngine,
   stopEngine,
+  updateTexture2DFromPixels,
   updateSprite2D,
 } from "@babylonjs/lite";
 import tileUrl from "./babylon/images/concentric-squares-32.png?url";
+import logoUrl from "./babylon/images/babylon_logo_32x32.png?url";
 import { contentConfig, getRenderingPolicy, logicalResolution, pixelPerfectOptions, showcaseTileSize } from "./babylon/config.js";
 import { getInitializationMessage } from "./babylon/initialization.js";
 import { getLogicalToRenderScale } from "./babylon/pixel-perfect.js";
 import { createRenderTargetSurfaceView, getRenderResolutionDimensions } from "./babylon/render-resolution.js";
+import { drawWorldHud, hitTestWorldHud } from "./babylon/world-hud.js";
 import { useViewportInfo } from "../ui/ViewportInfoContext.jsx";
 
 const TAU = Math.PI * 2;
@@ -36,21 +40,49 @@ const ROTATION_STEP_MS = 50;
 const BACKGROUND = Object.freeze({ r: 1, g: 1, b: 1, a: 1 });
 
 function PixelPerfectShowcase() {
-  const { setScale, renderPreset, setRenderResolutionInfo, sceneBorderVisible, processingPaused } = useViewportInfo();
+  const {
+    setScale,
+    renderPreset,
+    setRenderResolutionInfo,
+    worldHudVisible,
+    renderResolutionText,
+    renderScaleText,
+    modeText,
+    openBabylonSettings,
+    cycleRenderResolution,
+    sceneBorderVisible,
+    processingPaused,
+  } = useViewportInfo();
   const hostRef = useRef(null);
   const canvasRef = useRef(null);
   const processingPausedRef = useRef(processingPaused);
   const renderPresetRef = useRef(renderPreset);
   const applyRenderResolutionRef = useRef(null);
+  const refreshWorldHudRef = useRef(null);
+  const worldHudHitTargetsRef = useRef({});
+  const worldHudInfoRef = useRef(null);
   const engineRef = useRef(null);
   const engineReadyRef = useRef(false);
   const engineRunningRef = useRef(false);
   const [message, setMessage] = useState("Starting Babylon Lite…");
 
+  worldHudInfoRef.current = {
+    visible: worldHudVisible,
+    resolutionText: renderResolutionText,
+    renderScaleText,
+    modeText,
+    openBabylonSettings,
+    cycleRenderResolution,
+  };
+
   useEffect(() => {
     renderPresetRef.current = renderPreset;
     applyRenderResolutionRef.current?.();
   }, [renderPreset]);
+
+  useEffect(() => {
+    refreshWorldHudRef.current?.();
+  }, [worldHudVisible, renderResolutionText, renderScaleText, modeText]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -64,6 +96,17 @@ function PixelPerfectShowcase() {
     let presentationAtlas = null;
     let presentationRenderer = null;
     let presentationSprite = null;
+    let hudCanvas = document.createElement("canvas");
+    let hudContext = hudCanvas.getContext("2d", { alpha: true });
+    let hudLogo = new Image();
+    let hudTexture = null;
+    let hudAtlas = null;
+    let hudLayer = null;
+    let hudSprite = null;
+    let hudWidth = 0;
+    let hudHeight = 0;
+    let nativeWidth = 0;
+    let nativeHeight = 0;
     let renderSurface = null;
     let renderer = null;
     let layer = null;
@@ -83,11 +126,73 @@ function PixelPerfectShowcase() {
       dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
       dprQuery.addEventListener("change", handleDprChange, { once: true });
     };
+    const getHudStyle = (selector) => {
+      const element = document.querySelector(selector);
+      if (!element) throw new Error(`Missing Babylon HUD style reference: ${selector}`);
+      const style = window.getComputedStyle(element);
+      return {
+        fontStyle: style.fontStyle,
+        fontWeight: style.fontWeight,
+        fontSize: style.fontSize,
+        fontFamily: style.fontFamily,
+        lineHeight: style.lineHeight,
+      };
+    };
+    const drawHudPixels = (width, height, dpr) => {
+      if (!hudContext) throw new Error("A 2D context is required to rasterize Babylon HUD glyphs.");
+      if (hudCanvas.width !== width) hudCanvas.width = width;
+      if (hudCanvas.height !== height) hudCanvas.height = height;
+      const info = worldHudInfoRef.current;
+      const result = drawWorldHud(hudContext, hudLogo, {
+        width,
+        height,
+        devicePixelRatio: dpr,
+        visible: info?.visible ?? false,
+        resolutionText: info?.resolutionText ?? "",
+        renderScaleText: info?.renderScaleText ?? "",
+        modeText: info?.modeText ?? "Mode: 2DPixelPerfect",
+        titleStyle: getHudStyle("[data-world-hud-title-style]"),
+        bodyStyle: getHudStyle("[data-world-hud-body-style]"),
+      });
+      worldHudHitTargetsRef.current = result.hitTargets;
+      return Uint8Array.from(hudContext.getImageData(0, 0, width, height).data);
+    };
+    const updateHudTexture = (width, height, dpr) => {
+      const pixels = drawHudPixels(width, height, dpr);
+      if (hudTexture && hudWidth === width && hudHeight === height) {
+        updateTexture2DFromPixels(engine, hudTexture, pixels);
+        return;
+      }
+      if (hudAtlas) disposeSpriteAtlas(hudAtlas);
+      if (hudTexture) releaseTexture(hudTexture);
+      hudTexture = createTexture2DFromPixels(engine, pixels, width, height, {
+        addressModeU: "clamp-to-edge",
+        addressModeV: "clamp-to-edge",
+        minFilter: "nearest",
+        magFilter: "nearest",
+      });
+      hudAtlas = createGridSpriteAtlas(hudTexture, {
+        cellWidthPx: width,
+        cellHeightPx: height,
+        columns: 1,
+        rows: 1,
+        pivot: [0.5, 0.5],
+        premultipliedAlpha: false,
+      });
+      hudLayer = createSprite2DLayer(hudAtlas, { pivot: [0.5, 0.5], order: 1 });
+      hudSprite = addSprite2D(hudLayer, {
+        positionPx: [width / 2, height / 2],
+        sizePx: [width, height],
+        frame: 0,
+      });
+      hudWidth = width;
+      hudHeight = height;
+    };
     const updateRenderResolution = () => {
       if (!engine || !renderer || !host || !canvas || !sprite) return;
       const dpr = window.devicePixelRatio || 1;
-      const nativeWidth = Math.max(1, Math.floor(host.clientWidth * dpr));
-      const nativeHeight = Math.max(1, Math.floor(host.clientHeight * dpr));
+      nativeWidth = Math.max(1, Math.floor(host.clientWidth * dpr));
+      nativeHeight = Math.max(1, Math.floor(host.clientHeight * dpr));
       const resolved = getRenderResolutionDimensions(
         nativeWidth,
         nativeHeight,
@@ -101,21 +206,24 @@ function PixelPerfectShowcase() {
       const sameTarget = renderTexture
         && renderTexture.width === resolved.width
         && renderTexture.height === resolved.height;
+      const samePresentationSize = hudWidth === nativeWidth && hudHeight === nativeHeight;
 
-      if (!sameTarget) {
+      if (!sameTarget || !samePresentationSize || !presentationRenderer) {
         if (renderer) setSpriteRendererTarget(renderer, null);
         if (presentationRenderer) disposeSpriteRenderer(presentationRenderer);
         if (presentationAtlas) disposeSpriteAtlas(presentationAtlas);
-        if (renderTexture) releaseTexture(renderTexture);
         presentationRenderer = null;
         presentationAtlas = null;
         presentationSprite = null;
-        renderTexture = createRenderTexture2D(engine, resolved.width, resolved.height, {
-          addressModeU: "clamp-to-edge",
-          addressModeV: "clamp-to-edge",
-          minFilter: "nearest",
-          magFilter: "nearest",
-        });
+        if (!sameTarget) {
+          if (renderTexture) releaseTexture(renderTexture);
+          renderTexture = createRenderTexture2D(engine, resolved.width, resolved.height, {
+            addressModeU: "clamp-to-edge",
+            addressModeV: "clamp-to-edge",
+            minFilter: "nearest",
+            magFilter: "nearest",
+          });
+        }
         setSpriteRendererTarget(renderer, renderTexture);
         presentationAtlas = createGridSpriteAtlas(renderTexture, {
           cellWidthPx: resolved.width,
@@ -130,8 +238,9 @@ function PixelPerfectShowcase() {
           sizePx: [nativeWidth, nativeHeight],
           frame: 0,
         });
+        updateHudTexture(nativeWidth, nativeHeight, dpr);
         presentationRenderer = createSpriteRenderer(engine, {
-          layers: [presentationLayer],
+          layers: [presentationLayer, hudLayer],
           clear: true,
           clearValue: BACKGROUND,
         });
@@ -141,6 +250,11 @@ function PixelPerfectShowcase() {
           positionPx: [nativeWidth / 2, nativeHeight / 2],
           sizePx: [nativeWidth, nativeHeight],
         });
+        updateSprite2D(hudSprite, {
+          positionPx: [nativeWidth / 2, nativeHeight / 2],
+          sizePx: [nativeWidth, nativeHeight],
+        });
+        updateHudTexture(nativeWidth, nativeHeight, dpr);
       }
 
       // The sprite stays at world origin (0, 0). Treat the Sprite2D layer view as
@@ -182,14 +296,20 @@ function PixelPerfectShowcase() {
       if (presentationRenderer) disposeSpriteRenderer(presentationRenderer);
       if (renderer) disposeSpriteRenderer(renderer);
       if (presentationAtlas) disposeSpriteAtlas(presentationAtlas);
+      if (hudAtlas) disposeSpriteAtlas(hudAtlas);
       if (atlas) disposeSpriteAtlas(atlas);
       if (renderTexture) releaseTexture(renderTexture);
+      if (hudTexture) releaseTexture(hudTexture);
       if (texture) releaseTexture(texture);
       if (engine) disposeEngine(engine);
       animationBinding = null;
       presentationRenderer = null;
       renderer = null;
       presentationAtlas = null;
+      hudAtlas = null;
+      hudTexture = null;
+      hudLayer = null;
+      hudSprite = null;
       atlas = null;
       renderTexture = null;
       renderSurface = null;
@@ -213,6 +333,14 @@ function PixelPerfectShowcase() {
         }
         engine = createdEngine;
         engineRef.current = engine;
+
+        hudLogo.src = logoUrl;
+        await hudLogo.decode();
+        if (cancelled) {
+          setupFinished = true;
+          disposeResources();
+          return;
+        }
 
         const loadedTexture = await loadTexture2D(engine, tileUrl, pixelPerfectOptions.texture);
         if (cancelled) {
@@ -264,6 +392,16 @@ function PixelPerfectShowcase() {
         animationBinding = attachSpriteAnimationsToRenderer(renderer, animationManager);
 
         applyRenderResolutionRef.current = updateRenderResolutionSafely;
+        refreshWorldHudRef.current = () => {
+          if (!engine || !nativeWidth || !nativeHeight) return;
+          try {
+            updateHudTexture(nativeWidth, nativeHeight, window.devicePixelRatio || 1);
+          } catch (error) {
+            failed = true;
+            console.error("Babylon Lite world HUD update failed:", error);
+            if (!cancelled) setMessage(getInitializationMessage(Boolean(navigator.gpu), error));
+          }
+        };
         updateRenderResolution();
 
         await startEngine(engine);
@@ -305,6 +443,8 @@ function PixelPerfectShowcase() {
       window.removeEventListener("resize", updateRenderResolutionSafely);
       removeDprQuery();
       applyRenderResolutionRef.current = null;
+      refreshWorldHudRef.current = null;
+      worldHudHitTargetsRef.current = {};
       disposeResources();
     };
   }, []);
@@ -323,8 +463,23 @@ function PixelPerfectShowcase() {
     }
   }, [processingPaused]);
 
+  const handleHudClick = (event) => {
+    const host = hostRef.current;
+    if (!host) return;
+    const bounds = host.getBoundingClientRect();
+    const action = hitTestWorldHud({ x: event.clientX - bounds.left, y: event.clientY - bounds.top }, worldHudHitTargetsRef.current);
+    if (action === "openSettings") worldHudInfoRef.current?.openBabylonSettings?.();
+    if (action === "cycleResolution") worldHudInfoRef.current?.cycleRenderResolution?.();
+  };
+  const handleHudPointerMove = (event) => {
+    const bounds = hostRef.current?.getBoundingClientRect();
+    if (!bounds) return;
+    const action = hitTestWorldHud({ x: event.clientX - bounds.left, y: event.clientY - bounds.top }, worldHudHitTargetsRef.current);
+    event.currentTarget.style.cursor = action ? "pointer" : "";
+  };
+
   return (
-    <div ref={hostRef} className="babylon_content" data-renderer="babylon-lite" data-content-style="2d">
+    <div ref={hostRef} className="babylon_content" data-renderer="babylon-lite" data-content-style="2d" onClick={handleHudClick} onPointerMove={handleHudPointerMove} onPointerLeave={(event) => { event.currentTarget.style.cursor = ""; }}>
       <canvas ref={canvasRef} className="babylon_canvas" aria-hidden="true" />
       {sceneBorderVisible && <div className="babylon_scene_border" aria-hidden="true" />}
       {message && <div className="babylon_content_message" role="status">{message}</div>}

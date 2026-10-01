@@ -6,6 +6,12 @@ export const ViewportInfoContext = createContext({
   renderPreset: "native",
   nativeBackingSize: { width: 0, height: 0 },
   setRenderResolutionInfo: () => {},
+  worldHudVisible: false,
+  renderResolutionText: "",
+  renderScaleText: "",
+  modeText: "Mode: 2DPixelPerfect",
+  openBabylonSettings: () => {},
+  cycleRenderResolution: () => {},
   sceneBorderVisible: false,
   processingPaused: false,
 });
