@@ -177,9 +177,10 @@ test('uses the requested corner title/body styles and ties the Lite border to th
   assert.match(app, /key === "r" && !event\.repeat/);
   assert.doesNotMatch(app, /babylon_viewport_info|babylon_viewport_logo|babylonHudCompare/);
   assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"><div>Babylon Lite<\/div><div>\{renderResolutionText\}<\/div>/);
-  assert.match(app, /worldHudVisible: hudVisible,/);
-  assert.match(app, /className="babylon_accessible_controls"/);
-  assert.match(app, /data-world-hud-title-style/);
+  assert.match(app, /className="babylon_readout"/);
+  assert.match(app, /\(B\) Babylon Lite/);
+  assert.match(app, /FPS: \{String\(fps\)\.padStart\(3, "0"\)\}/);
+  assert.match(app, /timestamp - windowStart >= 1000/);
   assert.match(app, /Mode: 2DPixelPerfect/);
   assert.match(app, /key === "b"/);
   assert.match(app, /event\.key === "Escape"/);
@@ -188,9 +189,7 @@ test('uses the requested corner title/body styles and ties the Lite border to th
   assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"/);
   assert.match(app, /className=\{activeDialog === "babylon" \? "babylon_settings_dialog"/);
   assert.doesNotMatch(styles, /\.babylon_viewport_info|\.babylon_viewport_logo|\.babylon_viewport_info_button/);
-  assert.match(content, /layers: \[presentationLayer, hudLayer\]/);
-  assert.match(content, /onClick=\{handleHudClick\}/);
-  assert.match(content, /onPointerMove=\{handleHudPointerMove\}/);
+  assert.doesNotMatch(content, /drawWorldHud|hitTestWorldHud|getImageData|updateTexture2DFromPixels|createTexture2DFromPixels/);
   assert.match(content, /sceneBorderVisible && <div className="babylon_scene_border"/);
   assert.match(styles, /\.babylon_scene_border[\s\S]*border: 5px solid orange/);
 });
@@ -223,10 +222,7 @@ test('reports WebGPU-only initialization and allocation failures and uses the en
   assert.match(content, /if \(!navigator\.gpu\) throw new Error\("WebGPU is not available in this browser\."\)/);
   assert.match(content, /setMessage\(getInitializationMessage\(Boolean\(navigator\.gpu\), error\)\)/);
   assert.match(content, /createEngine\(canvas, pixelPerfectOptions\.engine\)/);
-  assert.match(content, /hudCanvas = document\.createElement\("canvas"\)/);
-  assert.match(content, /hudCanvas\.getContext\("2d", \{ alpha: true \}\)/);
-  assert.match(content, /createTexture2DFromPixels\(engine, pixels, width, height/);
-  assert.match(content, /layers: \[presentationLayer, hudLayer\]/);
+  assert.doesNotMatch(content, /hudCanvas|hudTexture|hudLayer|drawWorldHud|hitTestWorldHud|getImageData/);
   assert.doesNotMatch(content, /\.getContext\(["']webgl2?["']/i);
   assert.match(content, /await startEngine\(engine\)/);
   assert.match(content, /await startEngine\(engine\);\s*\/\/ StrictMode can unmount this effect while the first async engine start[\s\S]*?if \(cancelled\) return;/);
