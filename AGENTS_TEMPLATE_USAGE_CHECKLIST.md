@@ -67,6 +67,13 @@ copy:
 - [ ] Rename the README H1 (`# {project-name}`) and replace introduction,
       getting-started, and project-details placeholders with concise, verified
       project information.
+- [ ] In the README's **Original AI Prompt** section, replace
+      `[{original-ai-prompt-url}]({original-ai-prompt-url})` with a Markdown
+      link whose text and destination are the source URL for the earliest
+      substantive user prompt that started the project, usually the prompt
+      invoking a project-creation skill. Do not link a later refinement or an
+      AI-generated summary. If the source URL cannot be recovered, report this
+      item as unverified and retain the placeholder rather than inventing a URL.
 - [ ] When the destination is on GitHub and settings are accessible, set its
       About description and topics from the implemented purpose, technologies,
       platforms, and features. Remove inherited topics that do not apply; do
@@ -148,6 +155,9 @@ Perform this section only when OpenSpec is selected for the resulting project.
       authorized. Record the exact commands and outcomes.
 - [ ] Verify README links, screenshots, commands, packages, deployment
       instructions, and release instructions against the resulting project.
+- [ ] Verify the README's Original AI Prompt link points to the earliest
+      substantive initiating prompt, or report it as unverified if its source
+      URL is unavailable.
 - [ ] For GitHub destinations, verify About metadata and website URL when
       access is available; otherwise mark the external update pending.
 - [ ] Report each checklist item using one of these outcomes: **verified**,

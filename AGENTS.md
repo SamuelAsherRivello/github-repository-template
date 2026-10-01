@@ -66,6 +66,15 @@ testing. Human players may enable sound in the normal experience.
 
 ## React code and styles
 
+The README must include an **Original AI Prompt** section linking to the
+earliest substantive user prompt that started the project. This is usually the
+prompt that invoked a project-creation skill. Use the prompt's source URL as
+both the Markdown link text and destination, for example
+`[https://example.com/prompt](https://example.com/prompt)`. In the untouched
+template, retain `[{original-ai-prompt-url}]({original-ai-prompt-url})` as the
+placeholder. Do not substitute a later refinement or an AI-generated summary
+for the initiating prompt.
+
 - Do not leave dead code or dead styles. Remove unused React components,
   imports, variables, CSS selectors, and custom properties when they are no
   longer used.
