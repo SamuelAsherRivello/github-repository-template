@@ -6,7 +6,7 @@ import { contentConfig, getRenderingPolicy, pixelPerfectOptions } from '../src/c
 import { getInitializationMessage } from '../src/content/babylon/initialization.js';
 import { getLogicalToRenderScale } from '../src/content/babylon/pixel-perfect.js';
 import { getRenderScaleDisplayText } from '../src/content/babylon/showcase-overlay.js';
-import { drawWorldHud, getWorldHudLayout, hitTestWorldHud } from '../src/content/babylon/world-hud.js';
+import { BABYLON_HUD_LOGO_SIZE, drawWorldHud, getWorldHudLayout, hitTestWorldHud } from '../src/content/babylon/world-hud.js';
 import {
   createRenderTargetSurfaceView,
   cycleRenderResolutionPreset,
@@ -107,7 +107,6 @@ test('keeps the Babylon Lite world HUD at the existing CSS-pixel position across
     bodyLineHeight: 14.9333,
     titleWidth: 91,
     titleButtonWidth: 18,
-    resolutionWidth: 135,
     resolutionLineWidth: 135,
   });
   const twoX = getWorldHudLayout({
@@ -118,15 +117,16 @@ test('keeps the Babylon Lite world HUD at the existing CSS-pixel position across
     bodyLineHeight: 14.9333,
     titleWidth: 182,
     titleButtonWidth: 36,
-    resolutionWidth: 270,
     resolutionLineWidth: 270,
   });
 
   assert.deepEqual(oneX.logo, twoX.logo);
-  assert.equal(oneX.logo.width, 32);
+  assert.equal(oneX.logo.width, BABYLON_HUD_LOGO_SIZE);
   assert.equal(oneX.bottomInset, 9);
   assert.equal(oneX.hitTargets.openSettings.width, 18);
   assert.equal(oneX.hitTargets.cycleResolution.width, 135);
+  assert.equal(oneX.lines[4].top < oneX.logo.top, true);
+  assert.ok(Math.abs((oneX.lines[3].top + oneX.lines[3].lineHeight) - (oneX.cssHeight - oneX.bottomInset)) < 1e-9);
   assert.equal(hitTestWorldHud({ x: 470, y: oneX.hitTargets.openSettings.top + 1 }, oneX.hitTargets), 'openSettings');
   assert.equal(hitTestWorldHud({ x: 500, y: oneX.hitTargets.cycleResolution.top + 1 }, oneX.hitTargets), 'cycleResolution');
   assert.equal(hitTestWorldHud({ x: 10, y: 10 }, oneX.hitTargets), null);
@@ -154,10 +154,11 @@ test('draws the live Babylon Lite readout and clears a hidden HUD', () => {
   });
 
   assert.ok(drawn.filter(([kind]) => kind === 'text').every(([, color]) => color === '#e0694b'));
-  assert.equal(drawn.filter(([kind]) => kind === 'text').length, 4);
+  assert.equal(drawn.filter(([kind]) => kind === 'text').length, 5);
   assert.equal(result.layout.lines[1].text, '(R) RenderResolution: 254x143');
   assert.equal(result.layout.lines[2].text, 'Render Scale: 0.25x');
   assert.equal(result.layout.lines[3].text, 'Mode: 2DPixelPerfect');
+  assert.equal(result.layout.lines[4].text, 'FPS: 000');
   assert.deepEqual(drawWorldHud(context, {}, { width: 1016, height: 572, visible: false }), { layout: null, hitTargets: {} });
 });
 

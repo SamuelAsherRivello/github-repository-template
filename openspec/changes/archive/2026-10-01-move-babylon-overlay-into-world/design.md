@@ -9,6 +9,7 @@ See proposal.md for motivation. The current Babylon Lite 2D path first renders t
 **Goals:**
 - Compose the logo and live readout through Babylon Lite at the final native backing size, after the low-resolution scene texture has been enlarged, so changing the render preset does not pixelate or resize the HUD.
 - Reuse the existing logo asset, color, title/body typography, centered alignment, 32 CSS-pixel logo size, and 9 CSS-pixel bottom inset.
+- Draw the live FPS line above the logo, outside the matched logo/readout block, so the added line does not shift the existing content.
 - Keep React as the source of the active resolution, scale, mode, dialog state, and user actions.
 - Verify the temporary Babylon Lite copy against the existing React copy before removing the visible React version.
 

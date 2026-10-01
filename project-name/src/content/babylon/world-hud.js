@@ -12,8 +12,8 @@ export function getWorldHudLayout({
   bodyLineHeight,
   titleWidth,
   titleButtonWidth,
-  resolutionWidth,
   resolutionLineWidth,
+  fpsWidth = 0,
 }) {
   const dpr = Number.isFinite(devicePixelRatio) && devicePixelRatio > 0 ? devicePixelRatio : 1;
   const cssWidth = width / dpr;
@@ -47,6 +47,7 @@ export function getWorldHudLayout({
       { text: "", top: resolutionTop, lineHeight: bodyLineHeight, width: resolutionLineWidth },
       { text: "", top: scaleTop, lineHeight: bodyLineHeight, width: 0 },
       { text: "", top: modeTop, lineHeight: bodyLineHeight, width: 0 },
+      { text: "", top: logoTop - bodyLineHeight, lineHeight: bodyLineHeight, width: fpsWidth },
     ],
     hitTargets: {
       openSettings: { ...titleRect, width: titleButtonWidth / dpr },
@@ -79,6 +80,7 @@ export function drawWorldHud(context, logo, {
   resolutionText,
   renderScaleText,
   modeText = "Mode: 2DPixelPerfect",
+  fpsText = "FPS: 000",
   titleStyle,
   bodyStyle,
   color = "#e0694b",
@@ -92,7 +94,7 @@ export function drawWorldHud(context, logo, {
   const titleLineHeight = Number.parseFloat(titleStyle.lineHeight);
   const bodyLineHeight = Number.parseFloat(bodyStyle.lineHeight);
   const title = "(B) Babylon Lite";
-  const lines = [title, resolutionText, renderScaleText, modeText];
+  const lines = [title, resolutionText, renderScaleText, modeText, fpsText];
 
   context.save();
   context.textAlign = "center";
@@ -101,7 +103,6 @@ export function drawWorldHud(context, logo, {
   context.font = titleFont;
   const titleWidth = context.measureText(title).width;
   const titleButtonWidth = context.measureText("(B)").width;
-  const resolutionWidth = context.measureText(resolutionText).width;
   context.font = bodyFont;
   const bodyWidths = lines.slice(1).map((line) => context.measureText(line).width);
   const layout = getWorldHudLayout({
@@ -112,8 +113,8 @@ export function drawWorldHud(context, logo, {
     bodyLineHeight,
     titleWidth,
     titleButtonWidth,
-    resolutionWidth,
     resolutionLineWidth: bodyWidths[0],
+    fpsWidth: bodyWidths[3],
   });
 
   context.imageSmoothingEnabled = true;

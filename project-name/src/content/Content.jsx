@@ -61,6 +61,7 @@ function PixelPerfectShowcase() {
   const refreshWorldHudRef = useRef(null);
   const worldHudHitTargetsRef = useRef({});
   const worldHudInfoRef = useRef(null);
+  const fpsTextRef = useRef("FPS: 000");
   const engineRef = useRef(null);
   const engineReadyRef = useRef(false);
   const engineRunningRef = useRef(false);
@@ -116,6 +117,23 @@ function PixelPerfectShowcase() {
     let animationBinding = null;
     let setupFinished = false;
     let failed = false;
+    let fpsAnimationFrame = 0;
+    let fpsWindowStart = 0;
+    let fpsFrameCount = 0;
+
+    const updateFps = (timestamp) => {
+      if (cancelled) return;
+      fpsFrameCount += 1;
+      if (!fpsWindowStart) fpsWindowStart = timestamp;
+      if (timestamp - fpsWindowStart >= 1000) {
+        const fps = Math.min(999, Math.round((fpsFrameCount * 1000) / (timestamp - fpsWindowStart)));
+        fpsTextRef.current = `FPS: ${String(fps).padStart(3, "0")}`;
+        fpsWindowStart = timestamp;
+        fpsFrameCount = 0;
+        refreshWorldHudRef.current?.();
+      }
+      fpsAnimationFrame = window.requestAnimationFrame(updateFps);
+    };
 
     const removeDprQuery = () => {
       dprQuery?.removeEventListener("change", handleDprChange);
@@ -151,6 +169,7 @@ function PixelPerfectShowcase() {
         resolutionText: info?.resolutionText ?? "",
         renderScaleText: info?.renderScaleText ?? "",
         modeText: info?.modeText ?? "Mode: 2DPixelPerfect",
+        fpsText: fpsTextRef.current,
         titleStyle: getHudStyle("[data-world-hud-title-style]"),
         bodyStyle: getHudStyle("[data-world-hud-body-style]"),
       });
@@ -291,6 +310,7 @@ function PixelPerfectShowcase() {
     const disposeResources = () => {
       if (disposed || !setupFinished) return;
       disposed = true;
+      if (fpsAnimationFrame) window.cancelAnimationFrame(fpsAnimationFrame);
       animationBinding && disposeSpriteAnimationBinding(animationBinding);
       if (renderer) setSpriteRendererTarget(renderer, null);
       if (presentationRenderer) disposeSpriteRenderer(presentationRenderer);
@@ -416,6 +436,7 @@ function PixelPerfectShowcase() {
           stopEngine(engine);
           engineRunningRef.current = false;
         }
+        fpsAnimationFrame = window.requestAnimationFrame(updateFps);
         resizeObserver = new ResizeObserver(updateRenderResolutionSafely);
         resizeObserver.observe(host);
         window.addEventListener("resize", updateRenderResolutionSafely);

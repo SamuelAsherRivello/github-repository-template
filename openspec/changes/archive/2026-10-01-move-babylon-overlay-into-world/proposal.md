@@ -6,7 +6,7 @@ The Babylon Lite logo and its live renderer readout currently sit in a React ove
 
 ## What Changes
 
-- Render the Babylon Lite logo and the four-line title, render-resolution, render-scale, and mode readout in the Babylon Lite world.
+- Render the Babylon Lite logo and the title, render-resolution, render-scale, mode, and live FPS readout in the Babylon Lite world. Keep the FPS line above the logo so it does not shift the logo or matched title and readout lines.
 - Keep the existing React version visible while the world-rendered version is brought up, then visually compare size, logo shape, text styling/color, and bottom-center placement at representative viewport sizes and render presets before removing the visible React copy.
 - Preserve live resolution updates, the B and R keyboard shortcuts, the clickable title and resolution actions, and the Babylon Lite settings dialog.
 - Keep WebGPU-unavailable messaging and other React viewport controls outside the world display.
