@@ -88,6 +88,8 @@ When the automatic integer result is zero, the proposed default is positive frac
 
 Browser gutters are outside the viewport; game letterboxing is inside it. Pixel alignment concerns camera origin, sprite vertices, and presentation origin. Integer scaling guarantees concern logical-to-CSS pixels. Physical display guarantees additionally depend on DPR, backing mapping, filtering, and compositing; fractional DPR prevents a universal physical pixel promise.
 
+Browser zoom is an intended presentation change. It can resize the available CSS viewport and change DPR, so React's CSS layout and the displayed game can appear larger or smaller. The game keeps its chosen logical resolution, visible world bounds, and camera framing; zoom alone does not redefine its game coordinates. Recalculate native backing dimensions from the current CSS content size and DPR, then derive the selected internal render target from that backing size. Because browser zoom can shrink CSS dimensions while increasing DPR (or the reverse), their product—and therefore the Native render target—may remain nearly constant. That is expected; do not force the render target or logical view to change just to make its readout visibly differ after zoom.
+
 ## Implemented and future development diagnostics
 
 The showcase label reports the active render scale relative to Native; it is independent of the logical-to-CSS fit scale. Opening its React dialog outlines the Babylon Lite content-world boundary in `#e0694b`. A full diagnostics panel may additionally report CSS/client size, DPR, logical/internal/backing/display dimensions, and scale bounds. Validate pointer conversion independently of reduced render resolution and exercise resize, fullscreen, zoom, fractional DPR, and fallback.

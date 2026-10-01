@@ -26,6 +26,12 @@ The Babylon Lite 2D integration SHALL offer four render-resolution presets: quar
 - **THEN** all four target dimensions are recalculated from the new native backing dimensions
 - **AND** the selected preset remains the same
 
+#### Scenario: Browser zoom changes CSS size and DPR
+- **WHEN** browser zoom changes the CSS viewport size and device pixel ratio
+- **THEN** native backing dimensions are recalculated from the current CSS content size and DPR
+- **AND** the selected preset and game logical view remain unchanged
+- **AND** native pixel dimensions may remain nearly constant when CSS size and DPR change in opposite directions
+
 ### Requirement: Nearest-neighbor presentation
 The selected internal render target SHALL be presented into the native backing buffer using nearest-neighbor sampling when its dimensions differ from the native backing dimensions. This behavior SHALL retain hard, intentionally jagged pixel-art edges when enlarging or reducing the rendered image.
 

@@ -46,6 +46,15 @@ required, but adding secondary material there (such as design elements,
 instructions, or backstory) is optional. Games have full freedom to choose
 whether and how their content scrolls.
 
+Browser zoom is a supported browser presentation change. React and the game are
+both displayed through the browser's CSS-pixel viewport and may appear larger
+or smaller as zoom changes. Keep the game's logical resolution, world bounds,
+and camera framing independent of browser zoom. Recalculate DPR-aware backing
+and internal render dimensions when viewport size or device pixel ratio changes;
+the resulting native backing dimensions may remain nearly constant when zoom
+changes CSS viewport size and DPR in opposite directions. Do not change the
+logical game view merely to make the render-resolution readout change on zoom.
+
 Game audio is optional; music is not recommended. If a game includes sound,
 recommend 4 to 10 event-based sound effects and provide both an in-game mute
 toggle and a documented URL argument that mutes all sound for silent AI

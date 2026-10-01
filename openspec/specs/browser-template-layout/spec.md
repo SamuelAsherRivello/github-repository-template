@@ -41,12 +41,22 @@ Browser, viewport, gutter, and UI dimensions SHALL use CSS pixels without multip
 - **WHEN** the same CSS surface size is displayed at DPR 1, 1.25, and 2
 - **THEN** viewport dimensions and corner placement remain equivalent in CSS pixels
 
+#### Scenario: Browser zoom changes presentation
+- **WHEN** browser zoom changes the available CSS viewport dimensions
+- **THEN** responsive React layout and viewport fitting update to the new CSS dimensions
+- **AND** the game renderer remains inside the fitted viewport without changing its logical resolution or world framing solely because of browser zoom
+
 ### Requirement: Content renderer preserves browser layout
 The starter SHALL allow a game renderer to run inside the viewport content layer beneath the existing UI overlay. Renderer backing resolution and game scaling SHALL NOT change CSS viewport, gutter, or UI geometry. The renderer SHALL not intercept input in UI corner controls.
 
 #### Scenario: Renderer and UI composition
 - **WHEN** the Babylon Lite content scene is running inside the viewport
 - **THEN** it fills the content layer beneath the UI, and the viewport ratio, external gutters, four corner roles, and UI CSS geometry remain unchanged
+
+#### Scenario: Zoomed browser presentation
+- **WHEN** browser zoom changes CSS viewport dimensions or device pixel ratio
+- **THEN** React UI and game presentation follow the browser's CSS-pixel scaling
+- **AND** game logical coordinates and camera framing remain unchanged while the renderer updates DPR-aware backing dimensions
 
 #### Scenario: Corner interaction above content
 - **WHEN** a user operates a corner control while game content is rendered underneath
