@@ -4,6 +4,7 @@ import { BrowserSurface } from "./BrowserSurface.jsx";
 import { aspectRatioPresets, defaultLayout } from "./layout.js";
 import { Dialog } from "./Dialog.jsx";
 import { getRenderScaleDisplayText } from "../content/babylon/showcase-overlay.js";
+import babylonLogoUrl from "../content/babylon/images/babylon_logo_32x32.png?url";
 import {
   cycleRenderResolutionPreset,
   getRenderResolutionDimensions,
@@ -63,6 +64,7 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
   const [activeDialog, setActiveDialog] = useState(null);
   const [renderScale, setRenderScale] = useState(1);
   const [reportedRenderResolution, setReportedRenderResolution] = useState(null);
+  const [fps, setFps] = useState(0);
   const nativeBackingSize = {
     width: Math.floor(viewportPixels.width * devicePixelRatio),
     height: Math.floor(viewportPixels.height * devicePixelRatio),
@@ -107,6 +109,25 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
     window.addEventListener("resize", updateWindowPixels);
     return () => window.removeEventListener("resize", updateWindowPixels);
   }, []);
+
+  useEffect(() => {
+    if (!hudVisible) return undefined;
+    let frameId = 0;
+    let windowStart = 0;
+    let frameCount = 0;
+    const sample = (timestamp) => {
+      frameCount += 1;
+      if (!windowStart) windowStart = timestamp;
+      if (timestamp - windowStart >= 1000) {
+        setFps(Math.min(999, Math.round((frameCount * 1000) / (timestamp - windowStart))));
+        windowStart = timestamp;
+        frameCount = 0;
+      }
+      frameId = window.requestAnimationFrame(sample);
+    };
+    frameId = window.requestAnimationFrame(sample);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [hudVisible]);
 
   useEffect(() => {
     const handleShortcut = (event) => {
@@ -175,27 +196,19 @@ export function App({ layout = defaultLayout, content = null, gutters = {} }) {
       scale: renderScale,
       setScale: setRenderScale,
       renderPreset,
-      nativeBackingSize,
       setRenderResolutionInfo: setReportedRenderResolution,
-      worldHudVisible: hudVisible,
-      renderResolutionText,
-      renderScaleText,
-      modeText,
-      openBabylonSettings,
-      cycleRenderResolution,
       sceneBorderVisible: activeDialog === "babylon",
       processingPaused: activeDialog !== null,
     }}>
     <BrowserSurface layout={activeLayout} gutters={gutters} onViewportResize={updateViewportPixels} ui={<>
-      {hudVisible && <div className="babylon_accessible_controls" aria-label="Babylon Lite viewport settings">
-        <span aria-live="polite">{renderResolutionText}; {renderScaleText}; {modeText}</span>
-        <button type="button" onClick={openBabylonSettings}>Open Babylon Lite settings</button>
-        <button type="button" onClick={cycleRenderResolution}>Cycle render resolution, currently {renderResolutionInfo.width} by {renderResolutionInfo.height}</button>
+      {hudVisible && <div className="babylon_readout" aria-label="Babylon Lite settings">
+        <img src={babylonLogoUrl} width="32" height="32" alt="" />
+        <button className="babylon_readout_title" type="button" onClick={openBabylonSettings}>(B) Babylon Lite</button>
+        <button className="babylon_readout_body" type="button" onClick={cycleRenderResolution}>{renderResolutionText}</button>
+        <div className="babylon_readout_body">Render Scale: {renderScaleText}</div>
+        <div className="babylon_readout_body">{modeText}</div>
+        <div className="babylon_readout_body" aria-live="off">FPS: {String(fps).padStart(3, "0")}</div>
       </div>}
-      <div className="babylon_hud_typography" aria-hidden="true">
-        <span className="corner-title" data-world-hud-title-style />
-        <span className="corner-body" data-world-hud-body-style />
-      </div>
       {hudVisible && <Corner position="top_left">
         <div id="project_title" className="corner-body">
           GitHub Repository Template
