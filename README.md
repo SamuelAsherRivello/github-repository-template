@@ -8,6 +8,12 @@
 <!-- AI: Update this project summary when the template is used. -->
 This is the project repo....
 
+## Original AI Prompt
+
+<!-- AI: Link the earliest substantive user prompt that kicked off this project, usually the prompt that invoked a project-creation skill. Use the prompt's source URL as both the link text and destination. -->
+
+[{original-ai-prompt-url}]({original-ai-prompt-url})
+
 ## Images
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
@@ -32,7 +38,6 @@ This is the project repo....
 1. [Getting Started](#getting-started)
 2. [Project Details](#project-details)
 3. [Credits](#credits)
-4. [Original AI Prompt](#original-ai-prompt)
 
 ## Getting Started
 
@@ -94,13 +99,6 @@ This is the project details...
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
 - [Vite](https://vite.dev/) provides local development and production builds.
-
-## Original AI Prompt
-
-<!-- AI: Link the earliest substantive user prompt that kicked off this project, usually the prompt that invoked a project-creation skill. Use the prompt's source URL as both the link text and destination. -->
-
-[{original-ai-prompt-url}]({original-ai-prompt-url})
-
 
 ## Credits
 
