@@ -11,9 +11,16 @@ This is the project repo....
 
 ## Original AI Prompt
 
-<!-- AI: Link the earliest substantive user prompt that kicked off this project, usually the prompt that invoked a project-creation skill. Use the prompt's source URL as both the link text and destination. -->
+<!-- AI: Link the earliest substantive user prompt that kicked off this project, usually the prompt that invoked a project-creation skill. Use the prompt's source URL as both the link text and destination. Put in this details foldout. -->
 
-[{original-ai-prompt-url}]({original-ai-prompt-url})
+<details>
+<summary>Read the full original prompt</summary>
+
+```text
+  {put prompt here}
+```
+
+</details>
 
 
 ## Live Demo
