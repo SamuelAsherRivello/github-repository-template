@@ -17,6 +17,8 @@ This is the project repo....
 <summary>Read the full original prompt</summary>
 
 ```text
+
+
 Create a new project from this template.
 
 Type: {App | Game}
@@ -27,6 +29,10 @@ Project description:
 
 For games:
 Rendering: {2D Pixel Perfect | 3D}
+
+```
+
+</details>
 
 ## Live Demo
 
