@@ -18,7 +18,6 @@ This is the project repo....
 
 ```text
 
-
 Create a new project from this template.
 
 Type: {App | Game}
