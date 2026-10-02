@@ -18,6 +18,10 @@ This is the project repo....
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
+### YouTube Thumbnail
+
+<a href="project-name/documentation/marketing/images/youtube-thumbnail.png"><img src="project-name/documentation/marketing/images/youtube-thumbnail.png" width="640" alt="Browser game repository template YouTube thumbnail" /></a>
+
 ### Screenshots
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
