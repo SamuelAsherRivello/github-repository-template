@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   addSpriteAnimation,
-  addSprite2D,
   attachSpriteAnimationsToRenderer,
-  centerSprite2DView,
   createRenderTexture2D,
   createGridSpriteAtlas,
   createSprite2DLayer,
@@ -21,12 +19,12 @@ import {
   setSpriteRendererTarget,
   startEngine,
   stopEngine,
-  updateSprite2D,
 } from "@babylonjs/lite";
 import tileUrl from "./babylon/images/concentric-squares-32.png?url";
 import { contentConfig, getRenderingPolicy, logicalResolution, pixelPerfectOptions, showcaseTileSize } from "./babylon/config.js";
 import { getInitializationMessage } from "./babylon/initialization.js";
 import { getLogicalToRenderScale } from "./babylon/pixel-perfect.js";
+import { BabylonLiteAIEntry, BabylonLiteMode } from "./babylon/pixel-grid-entry.js";
 import { createRenderTargetSurfaceView, getRenderResolutionDimensions } from "./babylon/render-resolution.js";
 import { useViewportInfo } from "../ui/ViewportInfoContext.jsx";
 
@@ -138,7 +136,7 @@ function PixelPerfectShowcase() {
           pivot: [0.5, 0.5],
         });
         const presentationLayer = createSprite2DLayer(presentationAtlas, { pivot: [0.5, 0.5] });
-        presentationSprite = addSprite2D(presentationLayer, {
+        presentationSprite = BabylonLiteAIEntry.addPresentationSprite(presentationLayer, {
           positionPx: [nativeWidth / 2, nativeHeight / 2],
           sizePx: [nativeWidth, nativeHeight],
           frame: 0,
@@ -152,7 +150,7 @@ function PixelPerfectShowcase() {
         presentationWidth = nativeWidth;
         presentationHeight = nativeHeight;
       } else if (presentationSprite) {
-        updateSprite2D(presentationSprite, {
+        BabylonLiteAIEntry.updatePresentationSprite(presentationSprite, {
           positionPx: [nativeWidth / 2, nativeHeight / 2],
           sizePx: [nativeWidth, nativeHeight],
         });
@@ -162,8 +160,10 @@ function PixelPerfectShowcase() {
       // the 2D camera: keep its focus at origin and scale the same logical bounds
       // into each target size. Resolution changes therefore alter raster size,
       // not the title's world position or camera framing.
-      layer.view.zoom = getLogicalToRenderScale(resolved.width, resolved.height, logicalResolution);
-      centerSprite2DView(layer.view, 0, 0, resolved.width, resolved.height);
+      BabylonLiteAIEntry.updateView(layer, {
+        zoom: getLogicalToRenderScale(resolved.width, resolved.height, logicalResolution),
+      });
+      BabylonLiteAIEntry.centerView(layer, 0, 0, resolved.width, resolved.height);
       setScale(resolved.scale);
       setRenderResolutionInfo({
         preset: resolved.preset,
@@ -218,6 +218,7 @@ function PixelPerfectShowcase() {
     const setup = async () => {
       try {
         if (!navigator.gpu) throw new Error("WebGPU is not available in this browser.");
+        BabylonLiteAIEntry.configure({ mode: BabylonLiteMode.PixelPerfect2D });
 
         const createdEngine = await createEngine(canvas, pixelPerfectOptions.engine);
         if (cancelled) {
@@ -246,7 +247,7 @@ function PixelPerfectShowcase() {
           pivot: [0.5, 0.5],
         });
         layer = createSprite2DLayer(atlas, { pivot: [0.5, 0.5] });
-        sprite = addSprite2D(layer, {
+        sprite = BabylonLiteAIEntry.addSprite(layer, {
           positionPx: [0, 0],
           sizePx: [showcaseTileSize, showcaseTileSize],
           frame: 0,
@@ -273,7 +274,7 @@ function PixelPerfectShowcase() {
         const animationManager = createSpriteAnimationManager();
         addSpriteAnimation(animationManager, createSpriteFrameAnimation({
           setFrame(step) {
-            if (!cancelled && sprite) updateSprite2D(sprite, { rotation: (step / ROTATION_STEPS) * TAU });
+            if (!cancelled && sprite) BabylonLiteAIEntry.update(sprite, { rotation: (step / ROTATION_STEPS) * TAU });
           },
         }, 0, ROTATION_STEPS - 1, true, ROTATION_STEP_MS));
         animationBinding = attachSpriteAnimationsToRenderer(renderer, animationManager);

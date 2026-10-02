@@ -28,7 +28,12 @@ reference-only requests, follow `AGENTS.md` and do not copy files.
       unsupported-browser message and do not add a fallback renderer. Implement
       the requested scene and renderer setup, including for 3D. Use Pixel
       Perfect for every 2D game, while choosing logical resolution and render
-      scale for that game.
+      scale for that game. For Babylon Lite 2D sprites, initialize
+      BabylonLiteAIEntry in PixelPerfect2D mode and route sprite creation,
+      position updates, and layer-view changes through its API. Keep fractional
+      simulation state separate from snapped render positions. Never call
+      addSprite2D/updateSprite2D or mutate layer.view directly in game code;
+      document transforms that suspend pixel-perfect appearance.
 - [ ] Keep primary game content in the viewport so it works in windowed and
       fullscreen modes. Keep the template gutter layout; secondary gutter
       content such as instructions, design elements, or backstory is optional.

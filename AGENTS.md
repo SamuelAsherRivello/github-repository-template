@@ -40,6 +40,18 @@ fallback renderer. Implement the scene and renderer setup required by the game,
 including for 3D. Every 2D game uses the Pixel Perfect rendering policy, while
 each game chooses its own logical resolution and render scale.
 
+For Babylon Lite 2D Pixel Perfect games, explicitly initialize
+`BabylonLiteAIEntry` with `BabylonLiteMode.PixelPerfect2D`. AI-generated game
+code MUST use its `addSprite`, `move`, `update`, `updateView`, and `centerView`
+methods for sprite creation, position changes, and camera-view changes. The
+entry point snaps projected sprite anchors after the Lite layer view and keeps
+requested simulation positions unsnapped. Read movement state from game state
+or `getSimulationPosition`, never from the snapped render position. Do not call
+Babylon Lite `addSprite2D` or `updateSprite2D` directly, and do not mutate
+`layer.view` directly. Renderer-owned presentation helpers are reserved for
+renderer infrastructure. Arbitrary sprite/view rotation or fractional view
+zoom may suspend pixel-perfect appearance and must be documented when used.
+
 The viewport is the priority location for primary game content and must remain
 usable in windowed and fullscreen modes. The template gutter layout is
 required, but adding secondary material there (such as design elements,

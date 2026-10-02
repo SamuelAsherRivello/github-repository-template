@@ -42,6 +42,29 @@ The React UI layer must not assign shortcuts or otherwise capture **WASD, the fo
 | Pixel Perfect (required for 2D games) | The showcase uses a 320x180 logical stage with centered integer logical-to-CSS scaling when it fits; it samples the imported 32x32 tile with nearest minification and magnification, disables mipmaps and MSAA, and keeps the canvas backing DPR-aware. A game chooses its own logical resolution and render scale. |
 | Performance-scaled 3D | Separate policy: choose perspective or orthographic projection; use fixed or dynamic internal resolution scaling with explicit bounds and a performance target. Keep UI at independent CSS resolution. The 2D Pixel Perfect policy does not apply to 3D. |
 
+### Pixel-aligned Babylon Lite sprite movement
+
+In 2D Pixel Perfect mode, initialize `BabylonLiteAIEntry` with `BabylonLiteMode.PixelPerfect2D` before creating game sprites. Use `addSprite`, `move`, and `update` for every game `Sprite2DHandle` position. The entry point projects the requested position through the Lite layer view, rounds the final logical-screen anchor, and unprojects it for rendering. `getSimulationPosition` returns the unsnapped position; keep physics and movement based on that simulation state, not the rendered handle position.
+
+Route camera pan, zoom, rotation, and centering changes through `updateView` or `centerView`. Those operations resnap all managed sprites on the changed layer. Do not call Lite's `addSprite2D` or `updateSprite2D` directly, or mutate `layer.view` directly, in game code. The renderer-owned presentation-sprite helpers are reserved for the content renderer and preserve exact full-surface geometry.
+
+```js
+import { BabylonLiteAIEntry, BabylonLiteMode } from "./babylon/pixel-grid-entry.js";
+
+BabylonLiteAIEntry.configure({ mode: BabylonLiteMode.PixelPerfect2D });
+
+const player = BabylonLiteAIEntry.addSprite(layer, {
+  positionPx: [24, 32],
+  sizePx: [16, 16],
+  frame: 0,
+});
+
+BabylonLiteAIEntry.move(player, [playerX, playerY]);
+BabylonLiteAIEntry.updateView(layer, { positionPx: [cameraX, cameraY] });
+```
+
+The helper aligns sprite anchors after the layer view. It cannot make arbitrary sprite rotations, arbitrary view rotation, fractional view zoom, or fractional CSS presentation look pixel-perfect; document such exceptions and prefer grid-preserving transforms.
+
 The included Pixel Perfect showcase has a white background and an original 32x32 PNG at `project-name/src/content/babylon/images/concentric-squares-32.png`, made from concentric black and gray squares. Its native texels contain only hard black/gray boundaries; rotation reveals deliberate stair-step edges. The sprite is 32x32 logical world units and stays centered at the world origin. Its projected raster footprint changes with render resolution while its world size and center stay fixed. A React UI label sits in the lower-center target area: `(B) Babylon Lite` uses the existing corner-title style, while `Render Scale: <relative scale>x` and `Mode: 2DPixelPerfect` use corner-body. Render Scale is relative to the native backing resolution: Quarter is 0.25x, Half is 0.5x, Native is 1x, and Double is 2x. It is separate from the logical-to-CSS fit scale. The label uses the supplied `#e0694b` accent. Clicking `(B)` or pressing B opens a React dialog repeating the same settings. While open, the Babylon content surface has a 5-CSS-pixel `#e0694b` DOM outline; closing the dialog or pressing Escape removes it. The Babylon Lite render loop, including sprite animation processing, pauses while any Config, Stats, or Babylon Lite dialog is open and resumes when all are closed. Resize/DPR changes update the backing-pixel geometry.
 
 Babylon Lite owns native canvas backing sizing: its surface sets the buffer to `clientWidth/clientHeight × devicePixelRatio` (clamped only if explicitly configured). The integration leaves the default full DPR enabled and never writes DPR-scaled values into `canvas.width` or `canvas.height`. The internal render target is independently sized from that native backing size. Sprite positions and sizes are in logical world coordinates, while the Sprite2D view zoom maps those coordinates into the selected target; presentation then samples the target into the native backing canvas.

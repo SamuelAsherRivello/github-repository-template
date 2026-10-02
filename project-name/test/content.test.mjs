@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { inflateSync } from 'node:zlib';
 import test from 'node:test';
 import { contentConfig, getRenderingPolicy, pixelPerfectOptions } from '../src/content/babylon/config.js';
 import { getInitializationMessage } from '../src/content/babylon/initialization.js';
 import { getLogicalToRenderScale } from '../src/content/babylon/pixel-perfect.js';
+import {
+  BabylonLiteAIEntry,
+  BabylonLiteMode,
+  snapPositionPxThroughView,
+} from '../src/content/babylon/pixel-grid-entry.js';
 import { getRenderScaleDisplayText } from '../src/content/babylon/showcase-overlay.js';
 import { BABYLON_HUD_LOGO_SIZE, drawWorldHud, getWorldHudLayout, hitTestWorldHud } from '../src/content/babylon/world-hud.js';
 import {
@@ -58,6 +63,109 @@ test('derives four relative render resolutions from native backing dimensions an
   ]);
 });
 
+test('snaps Babylon Lite sprite anchors after the layer view and preserves the grid on round trip', async () => {
+  const { sprite2DWorldToScreenToRef } = await import('@babylonjs/lite');
+  const view = { positionPx: [0.5, -0.5], zoom: 1, rotation: 0 };
+  const snapped = snapPositionPxThroughView(view, [10.2, 2.2]);
+  const projected = sprite2DWorldToScreenToRef(view, snapped[0], snapped[1], { x: 0, y: 0 });
+
+  assert.deepEqual(projected, { x: 10, y: 3 });
+  assert.deepEqual(snapPositionPxThroughView(view, snapped), snapped);
+});
+
+test('snaps correctly through a zoomed and rotated Babylon Lite layer view', async () => {
+  const { sprite2DWorldToScreenToRef } = await import('@babylonjs/lite');
+  const view = { positionPx: [3.25, -4.5], zoom: 2, rotation: Math.PI / 2 };
+  const snapped = snapPositionPxThroughView(view, [10.2, 2.2]);
+  const projected = sprite2DWorldToScreenToRef(view, snapped[0], snapped[1], { x: 0, y: 0 });
+
+  assert.equal(Number.isInteger(projected.x), true);
+  assert.equal(Number.isInteger(projected.y), true);
+  assert.deepEqual(snapPositionPxThroughView(view, snapped), snapped);
+});
+
+test('requires explicit mode setup and resnaps a layer after view changes', () => {
+  assert.throws(
+    () => BabylonLiteAIEntry.addSprite({}, { positionPx: [0, 0] }),
+    /configure/,
+  );
+  assert.throws(
+    () => BabylonLiteAIEntry.configure({ mode: '3d' }),
+    /Unsupported or missing Babylon Lite mode/,
+  );
+  BabylonLiteAIEntry.configure({ mode: BabylonLiteMode.PixelPerfect2D });
+
+  const layer = { view: { positionPx: [0, 0], zoom: 1, rotation: 0 } };
+  BabylonLiteAIEntry.updateView(layer, {
+    positionPx: [0.5, -0.25],
+    zoom: 2,
+    rotation: Math.PI / 2,
+  });
+  assert.deepEqual(layer.view, {
+    positionPx: [0.5, -0.25],
+    zoom: 2,
+    rotation: Math.PI / 2,
+  });
+  assert.throws(
+    () => BabylonLiteAIEntry.updateView(layer, { offset: [1, 2] }),
+    /Unsupported Babylon Lite view property/,
+  );
+});
+
+test('rejects Babylon Lite sprite mutations outside the pixel-grid entry module', async () => {
+  const allowedFile = 'content/babylon/pixel-grid-entry.js';
+  const mutationPattern = /\b(?:addSprite2D|updateSprite2D)\s*\(/;
+  const liteImportPattern = /import\s*\{[^}]*\b(?:addSprite2D|updateSprite2D)\b[^}]*\}\s*from\s*["']@babylonjs\/lite["']/s;
+  const namespaceMutationPattern = /\b[A-Za-z_$][\w$]*\.(?:addSprite2D|updateSprite2D)\s*\(/;
+  const viewMutationPattern = /\b[A-Za-z_$][\w$]*\.view\.(?:positionPx(?:\[\d+\])?|zoom|rotation)\s*=/;
+  const viewHelperPattern = /\bcenterSprite2DView\s*\(/;
+  const rendererHelperPattern = /\bBabylonLiteAIEntry\.(?:addPresentationSprite|updatePresentationSprite)\s*\(/;
+
+  function findBypasses(sources) {
+    return sources.flatMap(({ file, source }) => {
+      if (file.replaceAll('\\', '/').endsWith(allowedFile)) return [];
+      const rendererHelperOutsideContent = rendererHelperPattern.test(source)
+        && !file.replaceAll('\\', '/').endsWith('content/Content.jsx');
+      return mutationPattern.test(source)
+        || liteImportPattern.test(source)
+        || namespaceMutationPattern.test(source)
+        || viewMutationPattern.test(source)
+        || viewHelperPattern.test(source)
+        || rendererHelperOutsideContent
+        ? [file]
+        : [];
+    });
+  }
+
+  async function listSources(directory, prefix = '') {
+    const entries = await readdir(directory, { withFileTypes: true });
+    const nested = await Promise.all(entries.map(async (entry) => {
+      const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+      const absolute = new URL(`${entry.name}${entry.isDirectory() ? '/' : ''}`, directory);
+      if (entry.isDirectory()) return listSources(absolute, relative);
+      if (!/\.jsx?$/.test(entry.name)) return [];
+      return [{ file: relative, source: await readFile(absolute, 'utf8') }];
+    }));
+    return nested.flat();
+  }
+
+  const sourceDirectory = new URL('../src/', import.meta.url);
+  const sources = await listSources(sourceDirectory);
+  assert.deepEqual(findBypasses(sources), []);
+  assert.deepEqual(findBypasses([{
+    file: 'game/player.js',
+    source: 'import { updateSprite2D } from "@babylonjs/lite"; updateSprite2D(player, { positionPx: [1, 2] });',
+  }]), ['game/player.js']);
+  assert.deepEqual(findBypasses([{
+    file: 'game/camera.js',
+    source: 'layer.view.positionPx[0] = cameraX; layer.view.zoom = 2;',
+  }]), ['game/camera.js']);
+  assert.deepEqual(findBypasses([{
+    file: 'game/player.js',
+    source: 'BabylonLiteAIEntry.updatePresentationSprite(player, { positionPx: [1, 2] });',
+  }]), ['game/player.js']);
+});
+
 test('keeps the logical camera focus and spinning title at world origin across target sizes', async () => {
   assert.equal(getLogicalToRenderScale(160, 90), 0.5);
   assert.equal(getLogicalToRenderScale(320, 180), 1);
@@ -65,8 +173,8 @@ test('keeps the logical camera focus and spinning title at world origin across t
 
   const content = await readFile(new URL('../src/content/Content.jsx', import.meta.url), 'utf8');
   assert.match(content, /positionPx: \[0, 0\]/);
-  assert.match(content, /centerSprite2DView\(layer\.view, 0, 0, resolved\.width, resolved\.height\)/);
-  assert.match(content, /layer\.view\.zoom = getLogicalToRenderScale/);
+  assert.match(content, /BabylonLiteAIEntry\.centerView\(layer, 0, 0, resolved\.width, resolved\.height\)/);
+  assert.match(content, /BabylonLiteAIEntry\.updateView\(layer,\s*\{\s*zoom: getLogicalToRenderScale/);
   assert.match(content, /setScale\(resolved\.scale\)/);
 });
 
