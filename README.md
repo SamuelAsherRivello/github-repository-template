@@ -1,5 +1,6 @@
 <!-- AI: Keep commands rooted at the repository. The Vite application, source, tests, and build output belong in project-name/. -->
-![Samuel Asher Rivello](project-name/documentation/samuel-asher-rivello-banner.png)
+<a href="project-name/documentation/samuel-asher-rivello-banner.png)"><img src="project-name/documentation/samuel-asher-rivello-banner.png" width="640" alt="Banner" /></a>
+<BR>
 
 # {project-name}
 
@@ -17,10 +18,6 @@ This is the project repo....
 ## Images
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-### YouTube Thumbnail
-
-<a href="project-name/documentation/marketing/images/youtube-thumbnail.png"><img src="project-name/documentation/marketing/images/youtube-thumbnail.png" width="640" alt="Browser game repository template YouTube thumbnail" /></a>
 
 ### Screenshots
 
