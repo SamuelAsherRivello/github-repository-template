@@ -15,21 +15,19 @@ This is the project repo....
 
 [{original-ai-prompt-url}]({original-ai-prompt-url})
 
-## Images
-
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-### Screenshots
-
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
-
-<a href="project-name/documentation/screenshot01.png"><img src="project-name/documentation/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
 ## Live Demo
 
 <!-- AI: Keep exactly one bullet containing the demo link and no other visible text. Do not mention releases or add other text here. Keep this one link updated to the latest release URL. -->
 
 - [{live-demo-url}](https://samuelasherrivello.github.io/github-repository-template/)
+
+
+## Images
+
+<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+
+<a href="project-name/documentation/screenshot01.png"><img src="project-name/documentation/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
 ## Table of Contents
 
