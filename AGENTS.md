@@ -84,6 +84,13 @@ testing. Human players may enable sound in the normal experience.
 - Keep `project-name/` as the Vite root and synchronize the GitHub repository
   URL with the resulting project repository when this template baseline is
   retained.
+- When creating a project from this template, rename the copied
+  `project-name/` directory to a concise, fitting name for the new app or game
+  before project implementation. Update every dependent path and configuration,
+  including Vite's `root`, project documentation paths, and generated-output
+  exclusions in `.gitignore`. Do not leave the generic `project-name/` name in
+  the resulting project. This instruction applies only to template usages; keep
+  the directory named `project-name/` in this template repository.
 
 ## React code and styles
 

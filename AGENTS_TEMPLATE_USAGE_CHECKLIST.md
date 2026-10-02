@@ -66,9 +66,13 @@ copy:
 - [ ] For GitHub creation, verify `origin` points to the new project repository
       before pushing. For a local-only copy, do not invent or configure a
       remote.
-- [ ] Rename `project-name/`, update the Vite `root` setting, and replace
-      `{project-name}`, `{github-owner}`, and `{repository-name}` with confirmed
-      metadata before adding project-specific implementation.
+- [ ] Before project-specific implementation, rename the copied `project-name/`
+      application directory to a concise, fitting name for the new app or game.
+      Update Vite's `root`, project documentation paths, generated-output
+      exclusions in `.gitignore`, and every other reference to the old folder
+      name. Keep the directory named `project-name/` in the template repository
+      itself. Then replace `{project-name}`, `{github-owner}`, and
+      `{repository-name}` with confirmed metadata.
 - [ ] Rename the README H1 (`# {project-name}`) and replace introduction,
       getting-started, and project-details placeholders with concise, verified
       project information.
@@ -94,7 +98,7 @@ copy:
       when the project has a release workflow; confirm a demo URL is live
       before presenting it as the project's demo.
 - [ ] Keep baseline package configuration at the repository root and
-      application source, tests, and assets under the chosen application
+      application source, tests, and assets under the renamed application
       directory unless the selected stack deliberately changes this layout.
 - [ ] Preserve or deliberately adapt the four HTML corner roles in `AGENTS.md`.
 
@@ -150,7 +154,10 @@ Perform this section only when OpenSpec is selected for the resulting project.
 
 ## 5. Delivery gate and summary
 
-- [ ] Search for `project-name`, `{github-owner}`, `{repository-name}`,
+- [ ] Search for `project-name`, including paths in configuration and ignore
+      files, and confirm no reference remains for the old application folder
+      name in the resulting project. Then search for `{github-owner}`,
+      `{repository-name}`,
       `{command}`, `{live-demo-url}`, `{demo_url}`,
       `github-repository-template`, `GitHub Repository Template`, and other
       template placeholders. Resolve or deliberately retain each occurrence
