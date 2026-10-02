@@ -11,17 +11,22 @@ This is the project repo....
 
 ## Original AI Prompt
 
-<!-- AI: Link the earliest substantive user prompt that kicked off this project, usually the prompt that invoked a project-creation skill. Use the prompt's source URL as both the link text and destination. Put in this details foldout. -->
+<!-- AI: Populate with the the earliest substantive user prompt that started this project. Replace the placeholder within the <details> below with the original prompt text. -->
 
 <details>
 <summary>Read the full original prompt</summary>
 
 ```text
-  {put prompt here}
-```
+Create a new project from this template.
 
-</details>
+Type: {App | Game}
+Orientation: {Portrait | Landscape}
 
+Project description:
+{Describe the app or game, including its core purpose and important features.}
+
+For games:
+Rendering: {2D Pixel Perfect | 3D}
 
 ## Live Demo
 
