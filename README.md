@@ -1,4 +1,4 @@
-<!-- AI: Keep commands rooted at the repository. The Vite application, source, tests, and build output belong in project-name/. -->
+<!-- AI: Keep commands rooted at the repository. The Vite application, source, tests, and build output belong in project-name/. Work within the following HTML template -->
 <a href="project-name/documentation/samuel-asher-rivello-banner.png)"><img src="project-name/documentation/samuel-asher-rivello-banner.png" width="640" alt="Banner" /></a>
 <BR>
 
@@ -42,7 +42,7 @@ Rendering: {2D Pixel Perfect | 3D}
 
 ## Images
 
-<!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
+<!-- AI: Do not add more than one sentence of introductory text at the top of this section. Work within the following HTML template -->
 
 <a href="project-name/documentation/screenshot01.png"><img src="project-name/documentation/screenshot01.png" width="400" alt="Screenshot placeholder" /></a>
 
