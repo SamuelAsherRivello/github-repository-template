@@ -21,10 +21,11 @@ copying or creating a destination. Do not treat reference-only use as permission
 to copy.
 
 When establishing a new project, determine whether the user wants a game or an
-app. For a game, keep the Babylon content and dependencies as the starting
-point and adapt them to the requested game. For an app, remove Babylon content
-and dependencies, along with associated imports, tests, assets, and docs used
-only by that content; update the lockfile after dependency changes.
+app. For a game that needs an engine, Babylon Lite is the recommended starting
+point and may be replaced with another engine if desired. For an app, remove
+Babylon Lite content and dependencies, along with associated imports, tests,
+assets, and docs used only by that content; update the lockfile after dependency
+changes.
 
 For every new app or game concept, choose either portrait or landscape before
 implementation. Use the template's corresponding viewport display for the

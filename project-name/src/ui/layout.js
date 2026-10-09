@@ -1,5 +1,5 @@
 // Change these presets to update the template's supported aspect ratios in one place.
-// Layout dimensions are CSS pixels; renderer resolution and DPR belong to a future integration.
+// Layout dimensions are CSS-pixel ratios; the content integration owns engine-specific render and backing resolutions.
 export const aspectRatioPresets = Object.freeze({
   landscape: Object.freeze({ width: 16, height: 9, label: "16:9" }),
   portrait: Object.freeze({ width: 9, height: 16, label: "9:16" }),

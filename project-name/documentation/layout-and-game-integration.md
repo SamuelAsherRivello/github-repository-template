@@ -119,7 +119,7 @@ The showcase label reports the active render scale relative to Native; it is ind
 
 ## Local verification
 
-Run `npm ci`, `npm test`, and `npm run build` from the repository root. Start `npm run dev` and open Vite's URL. The focused test suite covers the layout contract; separate existing skill-test failures may still be reported by the full suite.
+Run `npm ci`, `npm test`, and `npm run build` from the repository root. Start `npm run dev` and open Vite's URL. Checked-in tests cover layout fitting, selected source constraints, and Babylon Lite renderer calculations and helpers; they do not exercise full browser rendering or WebGPU lifecycle behavior.
 ## Conceptual layout and parameter tree
 
 Content extends beneath the UI; diagram spacing is illustrative. Shared and App parameters are implemented; Game parameters are future responsibilities.
