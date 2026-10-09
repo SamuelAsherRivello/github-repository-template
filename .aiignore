@@ -1,0 +1,16 @@
+# Pattern syntax: https://git-scm.com/docs/gitignore
+# Secrets and machine-local settings
+.env*
+*.key
+*.pem
+
+# Dependencies and generated material
+node_modules/
+/dist/
+/coverage/
+/output/
+/.cache/
+/.vite/
+
+# Browser tooling output, which may contain credentials
+/.playwright-cli/
