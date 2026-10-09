@@ -53,7 +53,8 @@ Rendering: {2D Pixel Perfect | 3D}
 <!-- AI: Do not include anything above the Table of Contents within the Table of Contents. -->
 1. [Getting Started](#getting-started)
 2. [Project Details](#project-details)
-3. [Credits](#credits)
+3. [Optional AI Skills](#optional-ai-skills)
+4. [Credits](#credits)
 
 ## Getting Started
 
@@ -96,7 +97,7 @@ This is the project details...
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
 - `project-name/index.html` mounts the React browser surface; `project-name/src/` contains viewport, gutter, content, and UI composition.
-- [Layout and game integration](project-name/documentation/layout-and-game-integration.md) explains configuration and future renderer responsibilities.
+- [Layout and game integration](project-name/documentation/layout-and-game-integration.md) documents viewport configuration, the implemented Babylon Lite showcase, and guidance for adapting the content layer to a game or app.
 - `project-name/test/` contains focused automated checks for the starter.
 - `project-name/documentation/` contains canonical README images and project
   documentation assets.
@@ -109,6 +110,29 @@ This is the project details...
 - `AGENTS_TEMPLATE_USAGE_CHECKLIST.md` contains the template reuse checklist.
 - [openspec](openspec/) contains the repository's specification workflow
   configuration.
+
+## Optional AI Skills
+
+Skills are not bundled by default. Keep skills in global storage when they are
+part of an individual's workflow; add a project-local skill only when the
+project depends on that skill and collaborators or automation need the same
+capability. Before adding one, check its license, maintenance status, and
+whether it introduces generated files or additional setup.
+
+These repositories are possible sources for optional skills:
+
+- [ai-skills-library](https://github.com/SamuelAsherRivello/ai-skills-library/) -
+  general-purpose skills.
+- [ai-skills-tiled](https://github.com/SamuelAsherRivello/ai-skills-tiled/) -
+  Tiled-focused skills.
+- [ai-skills-blender](https://github.com/SamuelAsherRivello/ai-skills-blender) -
+  Blender-focused skills.
+
+Humans should choose and install only the relevant skill using their AI tool's
+normal skill-installation mechanism. AI agents should first follow the
+repository's `AGENTS.md`, then use an available global skill, and finally use
+a project-local skill when the repository explicitly includes or requires one.
+Do not assume that a link alone installs or activates a skill.
 
 ### 📦 Packages
 

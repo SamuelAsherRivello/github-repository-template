@@ -34,7 +34,11 @@ attempts to serve both orientations. Do not select square for a new app or
 game concept.
 
 When adapting the starter into a game, treat the Babylon showcase as a renderer
-example and replace it with the requested game. Babylon Lite is WebGPU-only;
+example and replace it with the requested game. Babylon Lite is the recommended
+engine when a game needs an engine, but it may be replaced with another engine
+when appropriate. For app projects, remove Babylon Lite content and
+dependencies along with associated imports, tests, assets, and docs used only by
+that content. Babylon Lite is WebGPU-only;
 games using it must show a clear unsupported-browser message and must not add a
 fallback renderer. Implement the scene and renderer setup required by the game,
 including for 3D. Every 2D game uses the Pixel Perfect rendering policy, while
@@ -141,6 +145,27 @@ generated OpenSpec skills. When the resulting project requires OpenSpec, follow
 the authoritative setup and verification procedure in
 [the template usage checklist](AGENTS_TEMPLATE_USAGE_CHECKLIST.md#openspec-setup-when-required).
 Do not hand-edit generated OpenSpec skills.
+
+## Optional AI skills
+
+This template does not bundle general-purpose or tool-specific skills by
+default. Prefer global skills for a user's personal workflow. Add a skill under
+the resulting project's local skill directory only when the project requires
+that capability to be reproducible for collaborators or automation, and record
+the source, version or commit, license, and any installation steps. Do not copy
+an entire skills repository when only one skill is needed.
+
+Possible sources include:
+
+- `https://github.com/SamuelAsherRivello/ai-skills-library/`
+- `https://github.com/SamuelAsherRivello/ai-skills-tiled/`
+- `https://github.com/SamuelAsherRivello/ai-skills-blender`
+
+Links are references, not installations. Agents should use skills already
+available in their environment first and should not fetch or activate an
+external skill unless the user or repository workflow calls for it. When a
+project-local skill is present, follow its instructions only after confirming
+that it applies to the current task.
 
 ## Pull request workflow
 

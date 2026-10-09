@@ -50,6 +50,11 @@ reference-only requests, follow `AGENTS.md` and do not copy files.
 - [ ] If repository settings or access prevent the selected workflow, continue
       independent local work and record the external action as pending with the
       specific access needed.
+- [ ] Decide whether optional AI skills belong in the resulting project. Keep
+      personal workflow skills global; include only project-required skills
+      needed by collaborators or automation. For every included external skill,
+      record its source, version or commit, license, and setup steps. Do not
+      copy an entire skills repository when a single skill is sufficient.
 
 ## 2. Establish the new project
 
