@@ -1,0 +1,12 @@
+# Triage standardize skill: https://github.com/SamuelAsherRivello/ai-skills-library/tree/main/.agents/skills/triage-standardize
+# Pattern syntax: https://git-scm.com/docs/gitignore
+# Dependencies and generated material are outside triage scope.
+node_modules/
+/dist/
+/coverage/
+/output/
+/.cache/
+/.vite/
+
+# Browser tooling output may contain credentials and is not triage evidence.
+/.playwright-cli/
