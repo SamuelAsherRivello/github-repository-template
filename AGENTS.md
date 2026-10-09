@@ -92,6 +92,14 @@ testing. Human players may enable sound in the normal experience.
   the resulting project. This instruction applies only to template usages; keep
   the directory named `project-name/` in this template repository.
 
+## Browser testing capability fallback
+
+If the AI task requires WebGPU or another capability unsupported by the
+embedded browser, switch to Microsoft Edge for browser testing and
+interaction. Do not spend time debugging the embedded browser's limitation.
+Verify that Edge is using hardware acceleration and WebGPU, then continue the
+task there. Use the embedded browser only for tasks it supports.
+
 ## React code and styles
 
 The README must include an **Original AI Prompt** section linking to the
