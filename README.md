@@ -96,37 +96,15 @@ This is the project details...
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
-#### 🧰 Built-in
+- [AI Overview](docs/ai-overview.md) describes the built-in and optional AI
+  resources.
+
+### 🧠 Deep Dive
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
-- `AGENTS.md` contains repository-specific AI agent guidance.
-- `AGENTS_TEMPLATE_USAGE_CHECKLIST.md` contains the template reuse checklist.
-- [openspec](openspec/) contains the repository's specification workflow
-  configuration.
-
-#### 🧩 Optional
-
-Skills are not bundled by default. Keep skills in global storage when they are
-part of an individual's workflow; add a project-local skill only when the
-project depends on that skill and collaborators or automation need the same
-capability. Before adding one, check its license, maintenance status, and
-whether it introduces generated files or additional setup.
-
-These repositories are possible sources for optional skills:
-
-- [ai-skills-blender](https://github.com/SamuelAsherRivello/ai-skills-blender) -
-  Blender-focused skills.
-- [ai-skills-library](https://github.com/SamuelAsherRivello/ai-skills-library/) -
-  general-purpose skills.
-- [ai-skills-tiled](https://github.com/SamuelAsherRivello/ai-skills-tiled/) -
-  Tiled-focused skills.
-
-Humans should choose and install only the relevant skill using their AI tool's
-normal skill-installation mechanism. AI agents should first follow the
-repository's `AGENTS.md`, then use an available global skill, and finally use
-a project-local skill when the repository explicitly includes or requires one.
-Do not assume that a link alone installs or activates a skill.
+- [Deep Dive Overview](docs/deep-dive-overview.md) summarizes the project's
+  technical details for developers.
 
 ### 📦 Packages
 
@@ -147,7 +125,7 @@ Do not assume that a link alone installs or activates a skill.
 
 <!-- AI: This is where you want to have one page about the technical details of the project for a developer audience to get a high-level overview of the key three classes and contracts. -->
 
-- To learn more about the technical details, check out the [Deep Dive](docs/Deep-Dive-Overview.md).
+- To learn more about the technical details, check out the [Deep Dive](docs/deep-dive-overview.md).
 
 ## Credits
 
