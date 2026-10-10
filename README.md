@@ -1,5 +1,5 @@
 <!-- AI: Keep commands rooted at the repository. The Vite application, source, tests, and build output belong in project-name/. Work within the following HTML template -->
-<a href="project-name/documentation/samuel-asher-rivello-banner.png)"><img src="project-name/documentation/samuel-asher-rivello-banner.png" width="640" alt="Banner" /></a>
+<a href="docs/samuel-asher-rivello-banner.png"><img src="docs/samuel-asher-rivello-banner.png" width="640" alt="Banner" /></a>
 <BR>
 
 # {project-name}
@@ -44,7 +44,7 @@ Rendering: {2D Pixel Perfect | 3D}
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. Work within the following HTML template -->
 
-<a href="project-name/documentation/screenshot01.png"><img src="project-name/documentation/screenshot01.png" width="640" alt="Screenshot placeholder" /></a>
+<a href="docs/screenshot01.png"><img src="docs/screenshot01.png" width="640" alt="Screenshot placeholder" /></a>
 
 ## Table of Contents
 
@@ -53,7 +53,7 @@ Rendering: {2D Pixel Perfect | 3D}
 <!-- AI: Do not include anything above the Table of Contents within the Table of Contents. -->
 1. [Getting Started](#getting-started)
 2. [Project Details](#project-details)
-3. [Optional AI Skills](#optional-ai-skills)
+3. [Deep Dive](#deep-dive)
 4. [Credits](#credits)
 
 ## Getting Started
@@ -92,17 +92,11 @@ This is the getting started...
 <!-- AI: Update these project details when the template is used. -->
 This is the project details...
 
-### 📝 Structure
+### 🤖 AI
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
-- `project-name/index.html` mounts the React browser surface; `project-name/src/` contains viewport, gutter, content, and UI composition.
-- [Layout and game integration](project-name/documentation/layout-and-game-integration.md) documents viewport configuration, the implemented Babylon Lite showcase, and guidance for adapting the content layer to a game or app.
-- `project-name/test/` contains focused automated checks for the starter.
-- `project-name/documentation/` contains canonical README images and project
-  documentation assets.
-
-### 📦 AI
+#### 🧰 Built-in
 
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
@@ -111,7 +105,7 @@ This is the project details...
 - [openspec](openspec/) contains the repository's specification workflow
   configuration.
 
-## Optional AI Skills
+#### 🧩 Optional
 
 Skills are not bundled by default. Keep skills in global storage when they are
 part of an individual's workflow; add a project-local skill only when the
@@ -121,12 +115,12 @@ whether it introduces generated files or additional setup.
 
 These repositories are possible sources for optional skills:
 
+- [ai-skills-blender](https://github.com/SamuelAsherRivello/ai-skills-blender) -
+  Blender-focused skills.
 - [ai-skills-library](https://github.com/SamuelAsherRivello/ai-skills-library/) -
   general-purpose skills.
 - [ai-skills-tiled](https://github.com/SamuelAsherRivello/ai-skills-tiled/) -
   Tiled-focused skills.
-- [ai-skills-blender](https://github.com/SamuelAsherRivello/ai-skills-blender) -
-  Blender-focused skills.
 
 Humans should choose and install only the relevant skill using their AI tool's
 normal skill-installation mechanism. AI agents should first follow the
@@ -139,6 +133,21 @@ Do not assume that a link alone installs or activates a skill.
 <!-- AI: Do not add more than one sentence of introductory text at the top of this section. -->
 
 - [Vite](https://vite.dev/) provides local development and production builds.
+
+### 📝 Structure
+
+<!-- AI: Keep this section to exactly four bullet points. -->
+
+- `docs/` contains canonical README images and project documentation assets.
+- [Layout and game integration](docs/layout-and-game-integration.md) documents viewport configuration, the implemented Babylon Lite showcase, and guidance for adapting the content layer to a game or app.
+- `project-name/index.html` mounts the React browser surface; `project-name/src/` contains viewport, gutter, content, and UI composition.
+- `project-name/test/` contains focused automated checks for the starter.
+
+## Deep Dive
+
+<!-- AI: This is where you want to have one page about the technical details of the project for a developer audience to get a high-level overview of the key three classes and contracts. -->
+
+- To learn more about the technical details, check out the [Deep Dive](docs/Deep-Dive-Overview.md).
 
 ## Credits
 
