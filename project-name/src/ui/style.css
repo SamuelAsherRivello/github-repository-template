@@ -57,7 +57,7 @@ body {
   image-rendering: pixelated;
 }
 
-.babylon_scene_border {
+.content_focus_border {
   position: absolute;
   z-index: 1;
   inset: 0;
@@ -156,65 +156,6 @@ body {
   font-size: 8pt;
   font-weight: 400;
 }
-
-.babylon_readout {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: 9px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform: translateX(-50%);
-  color: #e0694b;
-  pointer-events: auto;
-  white-space: nowrap;
-}
-
-.babylon_readout img {
-  display: block;
-  width: 32px;
-  height: 32px;
-}
-
-.babylon_readout_title,
-.babylon_readout_body {
-  appearance: none;
-  border: 0;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  color: #e0694b;
-  line-height: 1.15;
-  font-family: inherit;
-  cursor: default;
-}
-
-.babylon_readout_title {
-  font-size: 10pt;
-  font-weight: 700;
-}
-
-.babylon_readout_body {
-  font-size: 8pt;
-  font-weight: 400;
-}
-
-.babylon_readout button {
-  cursor: pointer;
-}
-
-.babylon_readout button:hover,
-.babylon_readout button:active {
-  color: #e0694b;
-  transform: none;
-}
-
-.babylon_readout button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
 
 .corner a:hover,
 .corner_option:hover {

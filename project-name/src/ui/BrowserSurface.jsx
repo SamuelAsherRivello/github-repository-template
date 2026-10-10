@@ -46,10 +46,9 @@ export function BrowserSurface({ layout = defaultLayout, children, ui, gutters =
           <div key={side} className={`gutter gutter_${side}`} style={style}>{gutters[side]}</div>
         ))}
         <div id="viewport" data-orientation={layout.orientation} style={{ ...rectangle(viewport.x, viewport.y, viewport.width, viewport.height), "--project-viewport-width": `${viewport.width}px`, "--project-viewport-height": `${viewport.height}px` }}>
-          {/* Babylon Lite content mounts here beneath the independent UI layer. Its renderer
-              owns a DPR-aware backing buffer while this viewport stays in CSS pixels. The
-              2D preset uses nearest filtering, no mipmaps, and no MSAA. See the integration
-              guide for lifecycle, resize, WebGPU, 2D, and separate 3D policy details. */}
+          {/* Selected content mounts beneath the independent UI layer. Content and renderer
+              integrations own their backing resolution and lifecycle while the viewport stays
+              in CSS pixels. See the integration guide for current renderer examples. */}
           <div id="content_layer">{children}</div>
           <div id="ui_layer">{ui}</div>
         </div>

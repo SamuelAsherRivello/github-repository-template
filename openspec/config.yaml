@@ -9,7 +9,7 @@ context: |
   Preserve protected external links, version.txt sourcing, and fullscreen storage.
   Commands from the repository root: npm ci, npm run dev, npm test, npm run build.
   GitHub Pages uses /github-repository-template/ and project-name/dist/.
-  Canonical project documentation assets live in project-name/documentation/.
+  Canonical project documentation assets live in docs/.
   The template preserves only .agents/skills/.openspec-target; do not bundle
   or hand-edit generated OpenSpec skills. Do not create a PR unless requested.
 rules:

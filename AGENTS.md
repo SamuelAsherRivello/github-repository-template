@@ -85,7 +85,7 @@ testing. Human players may enable sound in the normal experience.
   configuration says otherwise.
 - `project-name/` is the Vite application root. Keep app source, tests, and
   assets there unless the chosen stack deliberately changes the layout.
-- Project documentation assets belong in `project-name/documentation/`.
+- Project documentation assets belong in `docs/` at the repository root.
 - Keep `project-name/` as the Vite root and synchronize the GitHub repository
   URL with the resulting project repository when this template baseline is
   retained.

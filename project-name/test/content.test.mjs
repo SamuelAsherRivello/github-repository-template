@@ -175,7 +175,7 @@ test('keeps the logical camera focus and spinning title at world origin across t
   assert.match(content, /positionPx: \[0, 0\]/);
   assert.match(content, /BabylonLiteAIEntry\.centerView\(layer, 0, 0, resolved\.width, resolved\.height\)/);
   assert.match(content, /BabylonLiteAIEntry\.updateView\(layer,\s*\{\s*zoom: getLogicalToRenderScale/);
-  assert.match(content, /setScale\(resolved\.scale\)/);
+  assert.match(content, /setRenderScale\(resolved\.scale\)/);
 });
 
 test('adapts Babylon Lite sprite projection dimensions while sharing the engine surface registry', () => {
@@ -270,36 +270,47 @@ test('draws the live Babylon Lite readout and clears a hidden HUD', () => {
   assert.deepEqual(drawWorldHud(context, {}, { width: 1016, height: 572, visible: false }), { layout: null, hitTargets: {} });
 });
 
-test('uses the requested corner title/body styles and ties the Lite border to the React dialog', async () => {
-  const [app, styles, content] = await Promise.all([
+test('keeps the shell renderer-neutral and wires Babylon presentation through optional slots', async () => {
+  const [app, styles, content, presentation, shellContext, main, surface] = await Promise.all([
     readFile(new URL('../src/ui/App.jsx', import.meta.url), 'utf8'),
     readFile(new URL('../src/ui/style.css', import.meta.url), 'utf8'),
     readFile(new URL('../src/content/Content.jsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/content/babylon/BabylonPresentation.jsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/shared/ContentShellContext.jsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/main.jsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/ui/BrowserSurface.jsx', import.meta.url), 'utf8'),
   ]);
 
   assert.match(app, /className="corner-title">/);
-  assert.match(app, /RenderResolution: \$\{renderResolutionInfo\.width\}x\$\{renderResolutionInfo\.height\}/);
-  assert.match(app, /renderPreset: "native"/);
-  assert.match(app, /isRenderResolutionPreset\(saved\?\.renderPreset\)/);
-  assert.match(app, /localStorage\.setItem\(configStorageKey, JSON\.stringify\(config\)\)/);
-  assert.match(app, /key === "r" && !event\.repeat/);
-  assert.doesNotMatch(app, /babylon_viewport_info|babylon_viewport_logo|babylonHudCompare/);
-  assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"><div>Babylon Lite<\/div><div>\{renderResolutionText\}<\/div>/);
-  assert.match(app, /className="babylon_readout"/);
-  assert.match(app, /\(B\) Babylon Lite/);
-  assert.match(app, /FPS: \{String\(fps\)\.padStart\(3, "0"\)\}/);
-  assert.match(app, /timestamp - windowStart >= 1000/);
-  assert.match(app, /Mode: 2DPixelPerfect/);
-  assert.match(app, /key === "b"/);
+  assert.doesNotMatch(app, /content\/babylon/);
+  assert.match(app, /contentPresentation\?\.Readout/);
+  assert.match(app, /contentPresentation\?\.Settings/);
+  assert.match(app, /writeProjectConfigPatch\(localStorage, config\)/);
+  assert.doesNotMatch(app, /key === "r"|renderResolution/);
+  assert.doesNotMatch(app, /renderPreset|renderResolution|babylon/i);
+  assert.match(app, /key === "b" && contentPresentation\?\.Settings/);
+  assert.match(app, /contentSettingsOpen && <div className="content_focus_border"/);
   assert.match(app, /event\.key === "Escape"/);
-  assert.match(app, /sceneBorderVisible: activeDialog === "babylon"/);
-  assert.match(app, /processingPaused: activeDialog !== null/);
-  assert.match(app, /activeDialog === "babylon" \? <div className="dialog_options babylon_settings"/);
-  assert.match(app, /className=\{activeDialog === "babylon" \? "babylon_settings_dialog"/);
   assert.doesNotMatch(styles, /\.babylon_viewport_info|\.babylon_viewport_logo|\.babylon_viewport_info_button/);
+  assert.match(styles, /\.content_focus_border[\s\S]*border: 5px solid orange/);
+  assert.match(shellContext, /createContext\(\{ paused: false \}\)/);
+  assert.match(shellContext, /ContentShellProvider/);
+  assert.match(presentation, /readProjectConfig\(localStorage\)/);
+  assert.match(presentation, /isRenderResolutionPreset\(renderPreset\)/);
+  assert.match(presentation, /writeProjectConfigPatch\(localStorage, \{ renderPreset \}\)/);
+  assert.match(presentation, /className="babylon_readout"/);
+  assert.match(presentation, /\(B\) Babylon Lite/);
+  assert.match(presentation, /FPS: \{String\(fps\)\.padStart\(3, "0"\)\}/);
+  assert.match(presentation, /timestamp - windowStart >= 1000/);
+  assert.match(presentation, /event\.key\.toLowerCase\(\) === "r" && !event\.repeat/);
+  assert.match(presentation, /Mode: 2DPixelPerfect/);
+  assert.match(main, /contentPresentation=\{\{/);
+  assert.match(main, /BabylonPresentationProvider/);
+  assert.doesNotMatch(surface, /Babylon Lite content/);
   assert.doesNotMatch(content, /drawWorldHud|hitTestWorldHud|getImageData|updateTexture2DFromPixels|createTexture2DFromPixels/);
-  assert.match(content, /sceneBorderVisible && <div className="babylon_scene_border"/);
-  assert.match(styles, /\.babylon_scene_border[\s\S]*border: 5px solid orange/);
+  assert.match(content, /const \{ paused \} = useContentShell\(\)/);
+  assert.match(content, /useBabylonPresentation\(\)/);
+  assert.match(content, /\[paused\]/);
 });
 
 test('reports WebGPU-only initialization and allocation failures and uses the engine-owned frame lifecycle', async () => {

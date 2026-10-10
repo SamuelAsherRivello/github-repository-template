@@ -26,7 +26,8 @@ import { getInitializationMessage } from "./babylon/initialization.js";
 import { getLogicalToRenderScale } from "./babylon/pixel-perfect.js";
 import { BabylonLiteAIEntry, BabylonLiteMode } from "./babylon/pixel-grid-entry.js";
 import { createRenderTargetSurfaceView, getRenderResolutionDimensions } from "./babylon/render-resolution.js";
-import { useViewportInfo } from "../ui/ViewportInfoContext.jsx";
+import { useContentShell } from "../shared/ContentShellContext.jsx";
+import { useBabylonPresentation } from "./babylon/BabylonPresentation.jsx";
 
 const TAU = Math.PI * 2;
 const ROTATION_STEPS = 628;
@@ -34,16 +35,11 @@ const ROTATION_STEP_MS = 50;
 const BACKGROUND = Object.freeze({ r: 1, g: 1, b: 1, a: 1 });
 
 function PixelPerfectShowcase() {
-  const {
-    setScale,
-    renderPreset,
-    setRenderResolutionInfo,
-    sceneBorderVisible,
-    processingPaused,
-  } = useViewportInfo();
+  const { paused } = useContentShell();
+  const { setRenderScale, renderPreset, setRenderResolutionInfo } = useBabylonPresentation();
   const hostRef = useRef(null);
   const canvasRef = useRef(null);
-  const processingPausedRef = useRef(processingPaused);
+  const processingPausedRef = useRef(paused);
   const renderPresetRef = useRef(renderPreset);
   const applyRenderResolutionRef = useRef(null);
   const engineRef = useRef(null);
@@ -164,7 +160,7 @@ function PixelPerfectShowcase() {
         zoom: getLogicalToRenderScale(resolved.width, resolved.height, logicalResolution),
       });
       BabylonLiteAIEntry.centerView(layer, 0, 0, resolved.width, resolved.height);
-      setScale(resolved.scale);
+      setRenderScale(resolved.scale);
       setRenderResolutionInfo({
         preset: resolved.preset,
         width: resolved.width,
@@ -326,23 +322,22 @@ function PixelPerfectShowcase() {
   }, []);
 
   useEffect(() => {
-    processingPausedRef.current = processingPaused;
+    processingPausedRef.current = paused;
     const engine = engineRef.current;
     if (!engine || !engineReadyRef.current) return;
 
-    if (processingPaused && engineRunningRef.current) {
+    if (paused && engineRunningRef.current) {
       stopEngine(engine);
       engineRunningRef.current = false;
-    } else if (!processingPaused && !engineRunningRef.current) {
+    } else if (!paused && !engineRunningRef.current) {
       engineRunningRef.current = true;
       void startEngine(engine);
     }
-  }, [processingPaused]);
+  }, [paused]);
 
   return (
     <div ref={hostRef} className="babylon_content" data-renderer="babylon-lite" data-content-style="2d">
       <canvas ref={canvasRef} className="babylon_canvas" aria-hidden="true" />
-      {sceneBorderVisible && <div className="babylon_scene_border" aria-hidden="true" />}
       {message && <div className="babylon_content_message" role="status">{message}</div>}
     </div>
   );

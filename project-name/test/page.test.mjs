@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { createServer } from 'vite';
 import viteConfig from '../../vite.config.js';
 import { defaultLayout, fitViewport, validateLayout } from '../src/ui/layout.js';
+import { projectConfigStorageKey, readProjectConfig, writeProjectConfigPatch } from '../src/shared/projectConfigStorage.js';
 
 test('keeps npm/application and GitHub Pages roots', () => {
   assert.equal(viteConfig.root, 'project-name');
@@ -27,9 +32,29 @@ test('invalid dimensions and orientation give actionable errors', () => {
   assert.throws(() => fitViewport(-1,900,defaultLayout), /nonnegative CSS/);
   assert.deepEqual(fitViewport(0,0,defaultLayout), {width:0,height:0,x:0,y:0});
 });
-test('preserves corner contracts and Babylon Lite content-layer guidance', async () => {
+test('renderer settings patch the shared config without dropping shell preferences', () => {
+  const values = new Map([[projectConfigStorageKey, JSON.stringify({ renderPreset: 'half', hudVisible: false })]]);
+  const storage = {
+    getItem: key => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, value),
+  };
+
+  assert.equal(writeProjectConfigPatch(storage, { fullscreen: true }), true);
+  assert.deepEqual(readProjectConfig(storage), {
+    renderPreset: 'half',
+    hudVisible: false,
+    fullscreen: true,
+  });
+  assert.equal(writeProjectConfigPatch(storage, { renderPreset: 'quarter' }), true);
+  assert.deepEqual(readProjectConfig(storage), {
+    renderPreset: 'quarter',
+    hudVisible: false,
+    fullscreen: true,
+  });
+});
+test('preserves corner contracts and engine-neutral content-layer guidance', async () => {
   const read = name => readFile(new URL('../'+name,import.meta.url),'utf8');
-  const [app,surface,main,html,guide] = await Promise.all([read('src/ui/App.jsx'),read('src/ui/BrowserSurface.jsx'),read('src/main.jsx'),read('index.html'),read('documentation/layout-and-game-integration.md')]);
+  const [app,surface,main,html,guide] = await Promise.all([read('src/ui/App.jsx'),read('src/ui/BrowserSurface.jsx'),read('src/main.jsx'),read('index.html'),read('../docs/layout-and-game-integration.md')]);
   assert.ok(main.includes('getElementById("root")'));
   assert.ok(html.includes('id="root"'));
   for (const id of ['content_layer','ui_layer','viewport','browser_surface']) assert.ok(surface.includes('id="'+id+'"'));
@@ -37,8 +62,8 @@ test('preserves corner contracts and Babylon Lite content-layer guidance', async
   assert.match(app,/versionText.*trim/);
   assert.match(app,/noopener noreferrer/);
   assert.match(app,/github-repository-template.fullscreen/);
-  assert.match(surface,/Babylon Lite content mounts here/);
-  assert.doesNotMatch(surface,/future Babylon Lite integration/i);
+  assert.match(surface,/Selected content mounts beneath the independent UI layer/);
+  assert.doesNotMatch(surface,/Babylon Lite content mounts here|future Babylon Lite integration/i);
   for (const term of ['Logical resolution','Internal render resolution','Canvas backing resolution','Display size','CSS size','fractional','StrictMode']) assert.ok(guide.includes(term));
   assert.doesNotMatch(surface,/import.*babylon/i);
 });
@@ -48,13 +73,58 @@ test('keeps the UI and content source boundaries discoverable', async () => {
     read('src/main.jsx'),
     read('src/ui/Template.jsx'),
     read('src/content/Content.jsx'),
-    read('documentation/coding-standards.md'),
+    read('../docs/coding-standards.md'),
   ]);
   assert.match(main, /\.\/ui\/App\.jsx/);
   assert.match(main, /\.\/content\/Content\.jsx/);
-  assert.match(main, /<App content=\{<Content \/>\} \/>/);
+  assert.match(main, /<AppComposition \/>/);
+  assert.match(main, /contentPresentation=\{\{/);
+  assert.match(main, /BabylonPresentationProvider/);
   assert.match(template, /export function Template/);
   assert.match(content, /export function Content/);
   assert.match(standards, /src\/ui\//);
   assert.match(standards, /src\/content\//);
+});
+
+test('renders the shell without a presentation and with a stub presentation', async () => {
+  const priorWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const priorStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { innerWidth: 1280, innerHeight: 720, devicePixelRatio: 1 },
+  });
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: { getItem: () => null, setItem() {}, clear() {} },
+  });
+
+  const server = await createServer({
+    configFile: fileURLToPath(new URL('../../vite.config.js', import.meta.url)),
+    server: { middlewareMode: true },
+    appType: 'custom',
+  });
+  try {
+    const { App } = await server.ssrLoadModule('/src/ui/App.jsx');
+    const StubReadout = () => createElement('div', null, 'Stub engine status');
+    const StubSettings = () => createElement('div', null, 'Stub engine settings');
+    const withoutPresentation = renderToStaticMarkup(createElement(App));
+    const withPresentation = renderToStaticMarkup(createElement(App, {
+      contentPresentation: {
+        title: 'Stub engine',
+        Readout: StubReadout,
+        Settings: StubSettings,
+      },
+    }));
+
+    assert.match(withoutPresentation, /id="browser_surface"/);
+    assert.doesNotMatch(withoutPresentation, /Babylon Lite|Stub engine/);
+    assert.match(withPresentation, /Stub engine status/);
+    assert.doesNotMatch(withPresentation, /Babylon Lite/);
+  } finally {
+    await server.close();
+    if (priorWindow) Object.defineProperty(globalThis, 'window', priorWindow);
+    else delete globalThis.window;
+    if (priorStorage) Object.defineProperty(globalThis, 'localStorage', priorStorage);
+    else delete globalThis.localStorage;
+  }
 });
