@@ -50,11 +50,27 @@ reference-only requests, follow `AGENTS.md` and do not copy files.
 - [ ] If repository settings or access prevent the selected workflow, continue
       independent local work and record the external action as pending with the
       specific access needed.
-- [ ] Decide whether optional AI skills belong in the resulting project. Keep
-      personal workflow skills global; include only project-required skills
-      needed by collaborators or automation. For every included external skill,
-      record its source, version or commit, license, and setup steps. Do not
-      copy an entire skills repository when a single skill is sufficient.
+- [ ] Decide whether optional AI skills belong in the resulting project. Skills
+      are not bundled by default. Keep skills in global storage when they are
+      part of an individual's workflow; add a project-local skill only when the
+      project depends on that skill and collaborators or automation need the
+      same capability. Before adding one, check its license, maintenance
+      status, and whether it introduces generated files or additional setup.
+- [ ] Consider these possible sources for optional skills:
+      [ai-skills-library](https://github.com/SamuelAsherRivello/ai-skills-library/)
+      for general-purpose skills,
+      [ai-skills-tiled](https://github.com/SamuelAsherRivello/ai-skills-tiled/)
+      for Tiled-focused skills, and
+      [ai-skills-blender](https://github.com/SamuelAsherRivello/ai-skills-blender)
+      for Blender-focused skills.
+- [ ] Have humans choose and install only the relevant skill using their AI
+      tool's normal skill-installation mechanism. AI agents must first follow
+      the repository's `AGENTS.md`, then use an available global skill, and
+      finally use a project-local skill when the repository explicitly includes
+      or requires one. Do not assume that a link alone installs or activates a
+      skill. For every included external skill, record its source, version or
+      commit, license, and setup steps. Do not copy an entire skills repository
+      when a single skill is sufficient.
 
 ## 2. Establish the new project
 
